@@ -17,6 +17,8 @@ const client = new Client(
     ====================================================================================
 */
 
+const proba = 0.75 ;
+
 const vendredi = new Schedule.RecurrenceRule() ;
 vendredi.dayOfWeek = 5 ;
 vendredi.hour = 8 ;
@@ -188,6 +190,40 @@ client.on("messageCreate", message =>
       else
       {
         message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
+      }
+    }
+  }
+) ;
+
+// Quoifeur, coubeh ; Commentdancousteau etc
+client.on("messageCreate", message =>
+  {
+    var text = message.content.toLowerCase() ;
+
+    if ( Math.random() > proba )
+    {
+      if ( text.includes("quoi ?") || text.ends("quoi") )
+      {
+        if ( Math.random() > 0.5 ) 
+        {
+          message.channel.send("-coubeh.") ;
+        }
+        else
+        {
+          message.channel.send("Feur.") ;
+        }
+      }
+      else if ( text.toLowerCase().includes("comment ?") || text.ends("comment") )
+      {
+        message.channel.send("-dant Cousteau.") ;
+      }
+      else if ( text.includes("oui ?") || text.ends("oui") )
+      {
+        message.channel.send("-stiti.") ;
+      }
+      else if ( text.includes("hein ?") || text.ends("hein") )
+      {
+        message.channel.send("Deux.") ;
       }
     }
   }
