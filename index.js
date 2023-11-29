@@ -95,6 +95,8 @@ birthdays.forEach( (birthday) =>
           }
         ) ;
 
+        console.log("Anniv(s) de : " + birthday.comment + '(' + birthday.date + ')') ;
+
         general.send(":index_pointing_at_the_viewer:" + users + "\n:palm_up_hand::birthday: \n \n:clap::clap: @1175043441273606144 :clap::clap: ") ;
       }
     ) ;
