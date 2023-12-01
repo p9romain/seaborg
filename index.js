@@ -180,14 +180,14 @@ client.on("messageCreate", message =>
 // Answer to ping
 client.on("messageCreate", message =>
   {
-    if ( message.content.includes("<@1177684802036576456>") )
+    if ( message.content.includes("<@1177684802036576456>") && message.channel !== secret_channel )
     {
       if ( message.author.id === "336237642574200834" )
       {
         message.channel.send("fdp ne me ping pas stp") ;
         message.channel.send("<:sea_pakontan:945802134803345459>") ;
       }
-      else
+      else if ( message.author.id !== "1177684802036576456" )
       {
         message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
       }
@@ -198,32 +198,40 @@ client.on("messageCreate", message =>
 // Quoifeur, coubeh ; Commentdancousteau etc
 client.on("messageCreate", message =>
   {
-    var text = message.content.toLowerCase() ;
-
-    if ( Math.random() > proba )
+    if ( message.author.id !== "1177684802036576456" && message.channel !== secret_channel )
     {
-      if ( text.includes("quoi ?") || text.ends("quoi") )
+      let text = message.content.toLowerCase() ;
+
+      if ( text.includes("goyave") )
       {
-        if ( Math.random() > 0.5 ) 
+        message.channel.send("Randomisa-hmmmmm.......") ;
+      }
+
+      if ( Math.random() > proba )
+      {
+        if ( text.includes("quoi ?") || text.includes("quoi?") || text.endsWith("quoi") )
         {
-          message.channel.send("-coubeh.") ;
+          if ( Math.random() > 0.5 ) 
+          {
+            message.channel.send("-coubeh.") ;
+          }
+          else
+          {
+            message.channel.send("Feur.") ;
+          }
         }
-        else
+        else if ( text.includes("comment ?") || text.includes("comment?") || text.endsWith("comment") )
         {
-          message.channel.send("Feur.") ;
+          message.channel.send("-dant Cousteau.") ;
         }
-      }
-      else if ( text.toLowerCase().includes("comment ?") || text.ends("comment") )
-      {
-        message.channel.send("-dant Cousteau.") ;
-      }
-      else if ( text.includes("oui ?") || text.ends("oui") )
-      {
-        message.channel.send("-stiti.") ;
-      }
-      else if ( text.includes("hein ?") || text.ends("hein") )
-      {
-        message.channel.send("Deux.") ;
+        else if ( text.includes("oui ?") || text.includes("oui?") || text.endsWith("oui") )
+        {
+          message.channel.send("-stiti.") ;
+        }
+        else if ( text.includes("hein ?") || text.includes("hein?") || text.endsWith("hein") )
+        {
+          message.channel.send("Deux.") ;
+        }
       }
     }
   }
