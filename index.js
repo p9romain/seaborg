@@ -86,20 +86,32 @@ Schedule.scheduleJob("0 12 7 12 *", () =>
 ) ;
 
 // Birthdays
-birthdays.forEach( (birthday) =>
+client.on("ready", () =>
   {
-    Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
+    birthdays.forEach( (birthday) =>
       {
-        let users = "" ;
-        birthday.ids.forEach( (username) =>
+        Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
           {
-            users += " @" + username ;
+            let users = "" ;
+            let first_names = "" ;
+            birthday.users.forEach( (user) =>
+              {
+                users += "<@" + user.id + "> " ;
+                first_names += user.comment + " " ;
+              }
+            ) ;
+
+            console.log("Anniv(s) de : " + first_names + "(" + birthday.date + ")") ;
+
+            general.send(":index_pointing_at_the_viewer:") ;
+            general.send(users) ; 
+            general.send("** **") ;
+            general.send(":palm_up_hand::birthday:") ; 
+            general.send("** **") ;
+            general.send("** **") ;
+            general.send(":clap::clap: <@&1175043441273606144> :clap::clap:") ;
           }
         ) ;
-
-        console.log("Anniv(s) de : " + birthday.comment + " (" + birthday.date + ")") ;
-
-        general.send(":index_pointing_at_the_viewer:" + users + "\n:palm_up_hand::birthday: \n \n:clap::clap: @1175043441273606144 :clap::clap: ") ;
       }
     ) ;
   }
