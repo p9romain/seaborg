@@ -54,7 +54,7 @@ Schedule.scheduleJob(vendredi, () =>
   {
     general.send(
       { 
-        content : "Merci Manu.", 
+        content : "_Merci Manu._", 
         files : ["./files/vendredi.png"] 
       }
     ) ;
@@ -74,14 +74,17 @@ Schedule.scheduleJob(friday_night, () =>
 ) ;
 
 // EH OUI LE 7 DECEMBRE
-Schedule.scheduleJob("0 12 7 12 *", () =>
+Schedule.scheduleJob("0 * 7 12 *", () =>
   {
-    cacapublier.send(
-      { 
-        content : ":hamburger: **EH OUI** :hamburger:",
-        files : ["./files/eh_oui.mp4"] 
-      }
-    ) ;
+    if ( Math.proba < 0.25 )
+    {
+      cacapublier.send(
+        { 
+          content : "# :hamburger: EH OUI :hamburger:",
+          files : ["./files/eh_oui.mp4"] 
+        }
+      ) ;
+    }
   }
 ) ;
 
