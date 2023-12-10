@@ -192,7 +192,7 @@ client.on("messageCreate", message =>
 // Answer to ping
 client.on("messageCreate", message =>
   {
-    if ( message.content.includes("<@" + bot_id + ">") && message.channel !== secret_channel )
+    if ( (new RegExp(`<@${bot_id}>`, "ui")).test(message.content) && message.channel !== secret_channel )
     {
       if ( message.author.id === "336237642574200834" )
       {
@@ -212,16 +212,14 @@ client.on("messageCreate", message =>
   {
     if ( message.author.id !== bot_id && message.channel !== secret_channel )
     {
-      let text = message.content.toLowerCase() ;
-
-      if ( text.includes("goyave") )
+      if ( /(^|\s)g+o+y+a+v+e+($|\s)/ui.test(message.content) )
       {
         message.channel.send("Randomisa-hmmmmm.......") ;
       }
 
       if ( Math.random() < Config.proba_answer_meme )
       {
-        if ( text.includes("quoi ?") || text.includes("quoi?") || text.endsWith("quoi") )
+        if ( /(^|\s)q+u+o+i+($|\s?\?)/ui.test(message.content) )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -232,15 +230,26 @@ client.on("messageCreate", message =>
             message.channel.send("Feur.") ;
           }
         }
-        else if ( text.includes("comment ?") || text.includes("comment?") || text.endsWith("comment") )
+        else if ( /(^|\s)p+o+u+r+q+u+o+i+($|\s?\?)/ui.test(message.content) )
+        {
+          if ( Math.random() < 0.5 ) 
+          {
+            message.channel.send("Pourcoubeh.") ;
+          }
+          else
+          {
+            message.channel.send("Pourfeur.") ;
+          }
+        }
+        else if (/(^|\s)c+o+m+m+e+n+t+($|\s?\?)/ui.test(message.content) )
         {
           message.channel.send("-dant Cousteau.") ;
         }
-        else if ( text.includes("oui ?") || text.includes("oui?") || text.endsWith("oui") )
+        else if ( /(^|\s)o+u+i+($|\s?\?)/ )
         {
           message.channel.send("-stiti.") ;
         }
-        else if ( text.includes("hein ?") || text.includes("hein?") || text.endsWith("hein") )
+        else if ( /(^|\s)h+e+i+n($|\s?\?)/ui.test(message.content) )
         {
           message.channel.send("Deux.") ;
         }
@@ -256,9 +265,7 @@ client.on("messageCreate", message =>
     {
       let text = message.content.toLowerCase() ;
 
-      if ( ( text.includes(" h ") || text.endsWith(" h") || text.startsWith("h ") || text === 'h' ) 
-           && 3 * Math.random() < 1 
-         )
+      if ( /(^|\s)h($|\s)/ui.test(message.content) && 3 * Math.random() < 1 )
       {
         let proba = Math.random() ;
         if ( proba < 0.25 )
