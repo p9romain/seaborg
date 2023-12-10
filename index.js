@@ -256,7 +256,7 @@ client.on("messageCreate", message =>
     {
       let text = message.content.toLowerCase() ;
 
-      if ( ( text.includes(" h ") || text.endsWith(" h") || text.startsWith("h ") || || text === 'h' ) 
+      if ( ( text.includes(" h ") || text.endsWith(" h") || text.startsWith("h ") || text === 'h' ) 
            && 3 * Math.random() < 1 
          )
       {
