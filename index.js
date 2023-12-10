@@ -248,7 +248,7 @@ client.on("messageCreate", message =>
         {
           message.channel.send("-dant Cousteau.") ;
         }
-        else if ( /(^|\s)o+u+i+($|\s?\?)/ )
+        else if ( /(^|\s)o+u+i+($|\s?\?)/ui.test(message.content) )
         {
           message.channel.send("-stiti.") ;
         }
