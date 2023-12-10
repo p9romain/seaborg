@@ -13,8 +13,6 @@ const client = new Client(
   }
 ) ;
 
-const bot_id = "1177684802036576456" ;
-
 /*
     ====================================================================================
 */
@@ -33,9 +31,9 @@ let general, cacapublier, secret_channel ;
 let old_channel ;
 client.on("ready", () =>
   {
-    general = client.channels.cache.get("850043957597700186") ;
-    cacapublier = client.channels.cache.get("887360643747962940") ;
-    secret_channel = client.channels.cache.get("1175043351746199553") ;
+    general = client.channels.cache.get(Config.general_id) ;
+    cacapublier = client.channels.cache.get(Config.cacapublier_id) ;
+    secret_channel = client.channels.cache.get(Config.secret_channel_id) ;
 
     old_channel = general ;
 
@@ -112,7 +110,7 @@ client.on("ready", () =>
             general.send(":palm_up_hand::birthday:") ; 
             general.send("** **") ;
             general.send("** **") ;
-            general.send(":clap::clap: <@&1175043441273606144> :clap::clap:") ;
+            general.send(`:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
           }
         ) ;
       }
@@ -197,7 +195,7 @@ client.on("messageCreate", message =>
   {
     if ( (new RegExp(`<@${bot_id}>`, "ui")).test(message.content) && message.channel !== secret_channel )
     {
-      if ( message.author.id === "336237642574200834" )
+      if ( message.author.id === Config.owner_id )
       {
         message.channel.send("fdp ne me ping pas stp") ;
         message.channel.send("<:sea_pakontan:945802134803345459>") ;
@@ -213,7 +211,7 @@ client.on("messageCreate", message =>
 // Quoifeur, coubeh ; Commentdancousteau etc
 client.on("messageCreate", message =>
   {
-    if ( message.author.id !== bot_id && message.channel !== secret_channel )
+    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
     {
       if ( /(^|\s)g+o+y+a+v+e+($|\s)/ui.test(message.content) )
       {
@@ -264,7 +262,7 @@ client.on("messageCreate", message =>
 // H
 client.on("messageCreate", message =>
   {
-    if ( message.author.id !== bot_id && message.channel !== secret_channel )
+    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
     {
       let text = message.content.toLowerCase() ;
 
