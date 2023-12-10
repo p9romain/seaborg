@@ -192,7 +192,7 @@ client.on("messageCreate", message =>
 // Answer to ping
 client.on("messageCreate", message =>
   {
-    if ( message.content.includes("<@${bot_id}>") && message.channel !== secret_channel )
+    if ( message.content.includes("<@" + bot_id + ">") && message.channel !== secret_channel )
     {
       if ( message.author.id === "336237642574200834" )
       {
@@ -256,7 +256,9 @@ client.on("messageCreate", message =>
     {
       let text = message.content.toLowerCase() ;
 
-      if ( (text.includes(" h ") || text === 'h') && Math.random() < 0.5 )
+      if ( ( text.includes(" h ") || text.endsWith(" h") || text.startsWith("h ") || || text === 'h' ) 
+           && 3 * Math.random() < 1 
+         )
       {
         let proba = Math.random() ;
         if ( proba < 0.25 )
