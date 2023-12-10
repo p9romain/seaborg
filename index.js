@@ -193,14 +193,14 @@ client.on("messageCreate", message =>
 // Answer to ping
 client.on("messageCreate", message =>
   {
-    if ( (new RegExp(`<@${bot_id}>`, "ui")).test(message.content) && message.channel !== secret_channel )
+    if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) && message.channel !== secret_channel )
     {
       if ( message.author.id === Config.owner_id )
       {
         message.channel.send("fdp ne me ping pas stp") ;
         message.channel.send("<:sea_pakontan:945802134803345459>") ;
       }
-      else if ( message.author.id !== bot_id )
+      else if ( message.author.id !== Config.bot_id )
       {
         message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
       }
