@@ -219,11 +219,11 @@ client.on("messageCreate", message =>
         message.channel.send("Randomisa-hmmmmm.......") ;
       }
 
-      if ( Math.random() > Config.proba_answer_meme )
+      if ( Math.random() < Config.proba_answer_meme )
       {
         if ( text.includes("quoi ?") || text.includes("quoi?") || text.endsWith("quoi") )
         {
-          if ( Math.random() > 0.5 ) 
+          if ( Math.random() < 0.5 ) 
           {
             message.channel.send("-coubeh.") ;
           }
@@ -252,6 +252,30 @@ client.on("messageCreate", message =>
 // H
 client.on("messageCreate", message =>
   {
+    if ( message.author.id !== bot_id && message.channel !== secret_channel )
+    {
+      let text = message.content.toLowerCase() ;
 
+      if ( (text.includes(" h ") || text === 'h') && Math.random() < 0.5 )
+      {
+        let proba = Math.random() ;
+        if ( proba < 0.25 )
+        {
+          message.channel.send("https://tenor.com/view/letter-h-gif-9063752") ;
+        }
+        else if ( proba >= 0.25 && proba < 0.5 )
+        {
+          message.channel.send("https://tenor.com/view/when-the-h-stock-images-funny-dance-meme-memes-gif-21772997") ;
+        }
+        else if ( proba >= 0.5 && proba < 0.75 )
+        {
+          message.channel.send("https://tenor.com/view/letter-h-h-letter-hhh-hh-h-meme-gif-22388730") ;
+        }
+        else
+        {
+          message.channel.send("https://tenor.com/view/meme-gif-20452123") ;
+        }
+      }
+    }
   }
 )
