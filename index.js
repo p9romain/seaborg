@@ -86,6 +86,25 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
   }
 ) ;
 
+// Need to mimir
+client.on("messageCreate", message =>
+  {
+    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
+    {
+      let date = message.createdAt ;
+      if ( date.getHours() >= 2 && date.getHours() <= 4 )
+      {
+        message.channel.send(
+          { 
+            content : "",
+            files : ["./files/es_hora_de_dormir.mp4"] 
+          }
+        ) ;
+      }
+    }
+  }
+) ;
+
 // Birthdays
 client.on("ready", () =>
   {
