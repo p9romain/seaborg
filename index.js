@@ -92,7 +92,7 @@ client.on("messageCreate", message =>
     if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
     {
       let date = message.createdAt ;
-      if ( date.getHours() >= 2 && date.getHours() <= 4 )
+      if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
       {
         message.channel.send(
           { 
