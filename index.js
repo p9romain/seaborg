@@ -13,17 +13,26 @@ const client = new Client(
   }
 ) ;
 
-function word_to_regex(text, interogative)
+const punctuations = "(-|_|,|;|.|\?|!)*" ;
+
+function word_to_regex(text, interogative, start_end = true)
 {
   let interr = interogative ? "?\\?" : "" ;
   let word = "" ;
 
   for ( const char of text )
   {
-    word += char + '+' ;
+    word += char + '+' + punctuations ;
   } ;
 
-  return new RegExp("(^|\s)" + word + "($|\s" + interr + ")", "ui") ;
+  if ( start_end )
+  {
+    return new RegExp("(^|\s)" + word + "($|\s" + interr + ")", "ui") ;
+  }
+  else
+  {
+    return new RegExp(word, "ui") ;
+  }
 }
 
 /*
@@ -41,7 +50,7 @@ friday_night.hour = 20 ;
 friday_night.minute = 0 ;
 
 let general, cacapublier, secret_channel ;
-let old_channel ;
+let old_channel, old_message_sent ;
 client.on("ready", () =>
   {
     general = client.channels.cache.get(Config.general_id) ;
@@ -49,6 +58,7 @@ client.on("ready", () =>
     secret_channel = client.channels.cache.get(Config.secret_channel_id) ;
 
     old_channel = general ;
+    old_message_sent = "" ;
 
     console.log("Ready") ;
   }
@@ -131,9 +141,10 @@ client.on("ready", () =>
   }
 ) ;
 
-// TALK MY CHILD !!!!
+
 client.on("messageCreate", message =>
   {
+    // TALK MY CHILD !!!!
     if ( message.channel === secret_channel )
     {
       const msg = message.content.split(' ') ; // whole message
@@ -200,132 +211,123 @@ client.on("messageCreate", message =>
         ) ;
       }
     }
-  }
-) ;
-
-// Need to mimir
-client.on("messageCreate", message =>
-  {
-    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
+    else if ( message.author.id !== Config.bot_id )
     {
-      let date = message.createdAt ;
-      if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+      // Answer to ping
+      if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) )
       {
-        message.channel.send(
-          { 
-            content : "",
-            files : ["./files/es_hora_de_dormir.mp4"] 
-          }
-        ) ;
-      }
-    }
-  }
-) ;
-
-// Answer to ping
-client.on("messageCreate", message =>
-  {
-    if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) && message.channel !== secret_channel )
-    {
-      if ( message.author.id === Config.owner_id )
-      {
-        message.channel.send("fdp ne me ping pas stp") ;
-        message.channel.send("<:sea_pakontan:945802134803345459>") ;
-      }
-      else if ( message.author.id !== Config.bot_id )
-      {
-        message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
-      }
-    }
-  }
-) ;
-
-// Quoifeur, coubeh ; Commentdancousteau etc
-client.on("messageCreate", message =>
-  {
-    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
-    {
-      if ( word_to_regex("goyave", false).test(message.content) )
-      {
-        message.channel.send("Randomisa-hmmmmm.......") ;
-      }
-
-      if ( Math.random() < Config.proba_answer_meme )
-      {
-        if ( word_to_regex("quoi", true).test(message.content) )
+        if ( message.author.id === Config.owner_id )
         {
-          if ( Math.random() < 0.5 ) 
-          {
-            message.channel.send("-coubeh.") ;
-          }
-          else
-          {
-            message.channel.send("Feur.") ;
-          }
-        }
-        else if ( word_to_regex("pourquoi", true).test(message.content) )
-        {
-          if ( Math.random() < 0.5 ) 
-          {
-            message.channel.send("Pourcoubeh.") ;
-          }
-          else
-          {
-            message.channel.send("Pourfeur.") ;
-          }
-        }
-        else if ( word_to_regex("comment", true).test(message.content) )
-        {
-          message.channel.send("-dant Cousteau.") ;
-        }
-        else if ( word_to_regex("oui", true).test(message.content) )
-        {
-          message.channel.send("-stiti.") ;
-        }
-        else if ( word_to_regex("hein", true).test(message.content) )
-        {
-          message.channel.send("Deux.") ;
-        }
-        else if ( word_to_regex("deux", true).test(message.content) )
-        {
-          message.channel.send("Trois.") ;
-        }
-        else if ( word_to_regex("trois", true).test(message.content) )
-        {
-          message.channel.send("Soleil.") ;
-        }
-      }
-    }
-  }
-) ;
-
-// H
-client.on("messageCreate", message =>
-  {
-    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
-    {
-      let text = message.content.toLowerCase() ;
-
-      if ( word_to_regex("h", false).test(message.content) && 3 * Math.random() < 1 )
-      {
-        let proba = Math.random() ;
-        if ( proba < 0.25 )
-        {
-          message.channel.send("https://tenor.com/view/letter-h-gif-9063752") ;
-        }
-        else if ( proba >= 0.25 && proba < 0.5 )
-        {
-          message.channel.send("https://tenor.com/view/when-the-h-stock-images-funny-dance-meme-memes-gif-21772997") ;
-        }
-        else if ( proba >= 0.5 && proba < 0.75 )
-        {
-          message.channel.send("https://tenor.com/view/letter-h-h-letter-hhh-hh-h-meme-gif-22388730") ;
+          message.channel.send("fdp ne me ping pas stp") ;
+          message.channel.send("<:sea_pakontan:945802134803345459>") ;
         }
         else
         {
-          message.channel.send("https://tenor.com/view/meme-gif-20452123") ;
+          message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
+        }
+      }
+      else
+      {
+        // Need to mimir
+        {
+          let date = message.createdAt ;
+          if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+          {
+            message.channel.send(
+              { 
+                content : "",
+                files : ["./files/es_hora_de_dormir.mp4"] 
+              }
+            ) ;
+          }
+        }
+
+        // Quoifeur, coubeh ; Commentdancousteau etc
+        {
+          if ( old_message_sent === "Deux." && word_to_regex("deux", false, false).test(message.content) )
+          {
+            message.channel.send("Trois.") ;
+            old_message_sent = "Trois." ;
+          }
+          else if ( old_message_sent === "Trois." && word_to_regex("trois", false, false).test(message.content) )
+          {
+            message.channel.send("Soleil.") ;
+            old_message_sent = "" ;
+          }
+
+          if ( Math.random() < Config.proba_answer_meme )
+          {
+            if ( word_to_regex("goyave", false).test(message.content) )
+            {
+              message.channel.send("Randomisa-hmmmmm.......") ;
+            }
+            else if ( word_to_regex("quoi", true).test(message.content) )
+            {
+              if ( Math.random() < 0.5 ) 
+              {
+                message.channel.send("-coubeh.") ;
+              }
+              else
+              {
+                message.channel.send("Feur.") ;
+              }
+            }
+            else if ( word_to_regex("pourquoi", true).test(message.content) )
+            {
+              if ( Math.random() < 0.5 ) 
+              {
+                message.channel.send("Pourcoubeh.") ;
+              }
+              else
+              {
+                message.channel.send("Pourfeur.") ;
+              }
+            }
+            else if ( word_to_regex("comment", true).test(message.content) )
+            {
+              message.channel.send("-dant Cousteau.") ;
+            }
+            else if ( word_to_regex("oui", true).test(message.content) )
+            {
+              message.channel.send("-stiti.") ;
+            }
+            else if ( word_to_regex("hein", true).test(message.content) )
+            {
+              message.channel.send("Deux.") ;
+              old_message_sent = "Deux." ;
+            }
+          }
+        }
+
+        // H
+        {
+          if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
+          {
+            let text = message.content.toLowerCase() ;
+
+            if ( word_to_regex("h", false).test(message.content) && 3 * Math.random() < 1 )
+            {
+              let proba = Math.random() ;
+              if ( proba < 0.25 )
+              {
+                message.channel.send("https://tenor.com/view/letter-h-gif-9063752") ;
+              }
+              else if ( proba >= 0.25 && proba < 0.5 )
+              {
+                message.channel.send("https://tenor.com/view/when-the-h-stock-images-funny-dance-meme-memes-gif-21772997") ;
+              }
+              else if ( proba >= 0.5 && proba < 0.75 )
+              {
+                message.channel.send("https://tenor.com/view/letter-h-h-letter-hhh-hh-h-meme-gif-22388730") ;
+              }
+              else
+              {
+                message.channel.send("https://tenor.com/view/meme-gif-20452123") ;
+              }
+            }
+          }
         }
       }
     }
   }
-)
+) ;
