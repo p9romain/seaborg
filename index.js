@@ -144,36 +144,65 @@ client.on("ready", () =>
 
 client.on("messageCreate", message =>
   {
-    // TALK MY CHILD !!!!
     if ( message.channel === secret_channel )
     {
-      const msg = message.content.split(' ') ; // whole message
-      let channel ;
-      let start ;
-
-      if ( msg[0].slice(0, 2) === "<#" && msg[0].slice(-1) === '>' )
+      if ( message.content === "@stop" )
       {
-        let channel_id = msg[0].slice(2, -1) ; // channel id : <#channel_id>
-        channel = client.channels.cache.get(channel_id) ; // get channel
-
-        old_channel = channel ; // set to the new channel used
-
-        start = 1 ;
+        console.log("Ododo le bot.") ;
+        process.exit(0) ; 
       }
+      // TALK MY CHILD !!!!
       else
       {
-        channel = old_channel ; // use the old channel used
+        const msg = message.content.split(' ') ; // whole message
+        let channel ;
+        let start ;
 
-        start = 0 ;
-      }
+        if ( msg[0].slice(0, 2) === "<#" && msg[0].slice(-1) === '>' )
+        {
+          let channel_id = msg[0].slice(2, -1) ; // channel id : <#channel_id>
+          channel = client.channels.cache.get(channel_id) ; // get channel
 
-      const text = msg.slice(start, msg.length).join(' ') ; // text to send
-      const attachments = message.attachments ;
-      // text, with or without attachements
-      if ( text )
-      {
-        // with attachement
-        if ( attachments.size )
+          old_channel = channel ; // set to the new channel used
+
+          start = 1 ;
+        }
+        else
+        {
+          channel = old_channel ; // use the old channel used
+
+          start = 0 ;
+        }
+
+        const text = msg.slice(start, msg.length).join(' ') ; // text to send
+        const attachments = message.attachments ;
+        // text, with or without attachements
+        if ( text )
+        {
+          // with attachement
+          if ( attachments.size )
+          {
+            let files = []
+            attachments.forEach( (file) =>
+              {
+                files.push(file) ;
+              }
+            ) ;
+            channel.send(
+              {
+                content : text,
+                files : files
+              }
+            ) ;
+          }
+          // without attachement
+          else
+          {
+            channel.send(text) ;
+          }
+        }
+        // just attachements
+        else if ( attachments.size )
         {
           let files = []
           attachments.forEach( (file) =>
@@ -183,32 +212,11 @@ client.on("messageCreate", message =>
           ) ;
           channel.send(
             {
-              content : text,
+              content : "",
               files : files
             }
           ) ;
         }
-        // without attachement
-        else
-        {
-          channel.send(text) ;
-        }
-      }
-      // just attachements
-      else if ( attachments.size )
-      {
-        let files = []
-        attachments.forEach( (file) =>
-          {
-            files.push(file) ;
-          }
-        ) ;
-        channel.send(
-          {
-            content : "",
-            files : files
-          }
-        ) ;
       }
     }
     else if ( message.author.id !== Config.bot_id )
