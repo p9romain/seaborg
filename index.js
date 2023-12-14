@@ -148,7 +148,7 @@ client.on("messageCreate", message =>
     {
       if ( message.content === "@stop" )
       {
-        console.log("Ododo le bot.") ;
+        console.log("Stop") ;
         process.exit(0) ; 
       }
       // TALK MY CHILD !!!!
