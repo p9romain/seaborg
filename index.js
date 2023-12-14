@@ -254,7 +254,7 @@ client.on("messageCreate", message =>
         {
           if ( is_deux_sent && word_to_regex("trois", false, false).test(message.content) )
           {
-            message.channel.send("Soleil ! <3) ;
+            message.channel.send("Soleil ! <3") ;
           }
           is_deux_sent = false ;
 
