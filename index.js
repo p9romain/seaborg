@@ -13,6 +13,19 @@ const client = new Client(
   }
 ) ;
 
+function word_to_regex(text, interogative)
+{
+  let interr = interogative ? "?\\?" : "" ;
+  let word = "" ;
+
+  for ( const char of text )
+  {
+    word += char + '+' ;
+  } ;
+
+  return new RegExp("(^|\s)" + word + "($|\s" + interr + ")", "ui") ;
+}
+
 /*
     ====================================================================================
 */
@@ -82,25 +95,6 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
           files : ["./files/eh_oui.mp4"] 
         }
       ) ;
-    }
-  }
-) ;
-
-// Need to mimir
-client.on("messageCreate", message =>
-  {
-    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
-    {
-      let date = message.createdAt ;
-      if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
-      {
-        message.channel.send(
-          { 
-            content : "",
-            files : ["./files/es_hora_de_dormir.mp4"] 
-          }
-        ) ;
-      }
     }
   }
 ) ;
@@ -209,6 +203,25 @@ client.on("messageCreate", message =>
   }
 ) ;
 
+// Need to mimir
+client.on("messageCreate", message =>
+  {
+    if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
+    {
+      let date = message.createdAt ;
+      if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+      {
+        message.channel.send(
+          { 
+            content : "",
+            files : ["./files/es_hora_de_dormir.mp4"] 
+          }
+        ) ;
+      }
+    }
+  }
+) ;
+
 // Answer to ping
 client.on("messageCreate", message =>
   {
@@ -232,14 +245,14 @@ client.on("messageCreate", message =>
   {
     if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
     {
-      if ( /(^|\s)g+o+y+a+v+e+($|\s)/ui.test(message.content) )
+      if ( word_to_regex("goyave", false).test(message.content) )
       {
         message.channel.send("Randomisa-hmmmmm.......") ;
       }
 
       if ( Math.random() < Config.proba_answer_meme )
       {
-        if ( /(^|\s)q+u+o+i+($|\s?\?)/ui.test(message.content) )
+        if ( word_to_regex("quoi", true).test(message.content) )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -250,7 +263,7 @@ client.on("messageCreate", message =>
             message.channel.send("Feur.") ;
           }
         }
-        else if ( /(^|\s)p+o+u+r+q+u+o+i+($|\s?\?)/ui.test(message.content) )
+        else if ( word_to_regex("pourquoi", true).test(message.content) )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -261,17 +274,25 @@ client.on("messageCreate", message =>
             message.channel.send("Pourfeur.") ;
           }
         }
-        else if (/(^|\s)c+o+m+m+e+n+t+($|\s?\?)/ui.test(message.content) )
+        else if ( word_to_regex("comment", true).test(message.content) )
         {
           message.channel.send("-dant Cousteau.") ;
         }
-        else if ( /(^|\s)o+u+i+($|\s?\?)/ui.test(message.content) )
+        else if ( word_to_regex("oui", true).test(message.content) )
         {
           message.channel.send("-stiti.") ;
         }
-        else if ( /(^|\s)h+e+i+n($|\s?\?)/ui.test(message.content) )
+        else if ( word_to_regex("hein", true).test(message.content) )
         {
           message.channel.send("Deux.") ;
+        }
+        else if ( word_to_regex("deux", true).test(message.content) )
+        {
+          message.channel.send("Trois.") ;
+        }
+        else if ( word_to_regex("trois", true).test(message.content) )
+        {
+          message.channel.send("Soleil.") ;
         }
       }
     }
@@ -285,7 +306,7 @@ client.on("messageCreate", message =>
     {
       let text = message.content.toLowerCase() ;
 
-      if ( /(^|\s)h($|\s)/ui.test(message.content) && 3 * Math.random() < 1 )
+      if ( word_to_regex("h", false).test(message.content) && 3 * Math.random() < 1 )
       {
         let proba = Math.random() ;
         if ( proba < 0.25 )
