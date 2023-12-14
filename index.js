@@ -13,7 +13,7 @@ const client = new Client(
   }
 ) ;
 
-const punctuations = "(-|_|,|;|.|\?|!)*" ;
+const punctuations = "(-|_|,|;|\\.|\\?|!)*" ;
 
 function word_to_regex(text, interogative, start_end = true)
 {
@@ -23,11 +23,11 @@ function word_to_regex(text, interogative, start_end = true)
   for ( const char of text )
   {
     word += char + '+' + punctuations ;
-  } ;
+  }
 
   if ( start_end )
   {
-    return new RegExp("(^|\s)" + word + "($|\s" + interr + ")", "ui") ;
+    return new RegExp("(^|\\s)" + word + "($|\\s" + interr + ")", "ui") ;
   }
   else
   {
@@ -50,7 +50,7 @@ friday_night.hour = 20 ;
 friday_night.minute = 0 ;
 
 let general, cacapublier, secret_channel ;
-let old_channel, old_message_sent ;
+let old_channel, is_deux_sent ;
 client.on("ready", () =>
   {
     general = client.channels.cache.get(Config.general_id) ;
@@ -58,7 +58,7 @@ client.on("ready", () =>
     secret_channel = client.channels.cache.get(Config.secret_channel_id) ;
 
     old_channel = general ;
-    old_message_sent = "" ;
+    is_deux_sent = false ;
 
     console.log("Ready") ;
   }
@@ -252,15 +252,10 @@ client.on("messageCreate", message =>
 
         // Quoifeur, coubeh ; Commentdancousteau etc
         {
-          if ( old_message_sent === "Deux." && word_to_regex("deux", false, false).test(message.content) )
-          {
-            message.channel.send("Trois.") ;
-            old_message_sent = "Trois." ;
-          }
-          else if ( old_message_sent === "Trois." && word_to_regex("trois", false, false).test(message.content) )
+          if ( is_deux_sent && word_to_regex("trois", false, false).test(message.content) )
           {
             message.channel.send("Soleil.") ;
-            old_message_sent = "" ;
+            is_deux_sent = false ;
           }
 
           if ( Math.random() < Config.proba_answer_meme )
@@ -302,7 +297,7 @@ client.on("messageCreate", message =>
             else if ( word_to_regex("hein", true).test(message.content) )
             {
               message.channel.send("Deux.") ;
-              old_message_sent = "Deux." ;
+              is_deux_sent = true ;
             }
           }
         }
