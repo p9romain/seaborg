@@ -254,9 +254,9 @@ client.on("messageCreate", message =>
         {
           if ( is_deux_sent && word_to_regex("trois", false, false).test(message.content) )
           {
-            message.channel.send("Soleil.") ;
-            is_deux_sent = false ;
+            message.channel.send("Soleil ! <3) ;
           }
+          is_deux_sent = false ;
 
           if ( Math.random() < Config.proba_answer_meme )
           {
