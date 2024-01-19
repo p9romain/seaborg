@@ -294,6 +294,10 @@ client.on("messageCreate", message =>
             {
               message.channel.send("-stiti.") ;
             }
+            else if ( word_to_regex("non", true).test(message.content) )
+            {
+              message.channel.send("-bril.") ;
+            }
             else if ( word_to_regex("hein", true).test(message.content) )
             {
               message.channel.send("Deux.") ;
