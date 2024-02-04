@@ -13,7 +13,7 @@ const client = new Client(
   }
 ) ;
 
-const fillers = "(-|_|,|;|\\.|\\?|!|#|\||=|\+|°|%|$|£|\*|'|\"|§|<|>)*" ;
+const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
 function word_to_regex(text, interogative, start_end = true)
 {
