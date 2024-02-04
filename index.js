@@ -13,7 +13,7 @@ const client = new Client(
   }
 ) ;
 
-const punctuations = "(-|_|,|;|\\.|\\?|!)*" ;
+const fillers = "(-|_|,|;|\\.|\\?|!|#|\||=|\+|°|%|$|£|\*|'|\"|§|<|>)*" ;
 
 function word_to_regex(text, interogative, start_end = true)
 {
@@ -22,7 +22,7 @@ function word_to_regex(text, interogative, start_end = true)
 
   for ( const char of text )
   {
-    word += char + '+' + punctuations ;
+    word += char + '+' + fillers ;
   }
 
   if ( start_end )
@@ -285,6 +285,10 @@ client.on("messageCreate", message =>
               {
                 message.channel.send("Pourfeur.") ;
               }
+            }
+            else if ( word_to_regex("qui", true).test(message.content) )
+            {
+              message.channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
             }
             else if ( word_to_regex("comment", true).test(message.content) )
             {
