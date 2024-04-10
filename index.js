@@ -234,6 +234,10 @@ client.on("messageCreate", message =>
           message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
         }
       }
+      else if ( Math.random() < 0.001 )
+      {
+        message.channel.send(`i pee in ur ass <@${message.author.id}>`) ;
+      }
       else
       {
         // Need to mimir
