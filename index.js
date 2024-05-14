@@ -15,7 +15,7 @@ const client = new Client(
 
 const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
-function word_to_regex(text, interogative, start_end = true)
+function word_to_regex(text, interogative = true, start_end = true)
 {
   let interr = interogative ? "?\\?" : "" ;
   let word = "" ;
@@ -233,114 +233,180 @@ client.on("messageCreate", message =>
         {
           message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
         }
+
+        return ;
       }
-      else if ( Math.random() < 0.001 )
+      
+      // Pee hehe 
+      if ( Math.random() < Config.proba_pee )
       {
-        message.channel.send(`i pee in ur ass <@${message.author.id}>`) ;
+        message.channel.send(`*pees in ur ass* <@${message.author.id}>`) ;
+        return ;
       }
-      else
+
+      // Need to mimir
       {
-        // Need to mimir
+        let date = message.createdAt ;
+        if ( Math.random < Config.proba_mimir && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
         {
-          let date = message.createdAt ;
-          if ( Math.random < 0.125 && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/es_hora_de_dormir.mp4"] 
+            }
+          ) ;
+          return ;
+        }
+      }
+
+      // Quoifeur, coubeh ; Commentdancousteau etc
+      {
+        if ( is_deux_sent && word_to_regex("trois", interogative = false, start_end = false).test(message.content) )
+        {
+          message.channel.send("Soleil ! <3") ;
+          is_deux_sent = false ;
+          return ;
+        }
+        id_deux_sent = false ;
+
+        if ( Math.random() < Config.proba_answer )
+        {
+          if ( word_to_regex("goyave", interogative = false).test(message.content) )
+          {
+            message.channel.send("Randomisa-hmmmmm.......") ;
+            return ;
+          }
+          else if ( word_to_regex("quoi").test(message.content) )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              message.channel.send("-coubeh.") ;
+            }
+            else
+            {
+              message.channel.send("Feur.") ;
+            }
+            return ;
+          }
+          else if ( word_to_regex("pourquoi").test(message.content) )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              message.channel.send("Pourcoubeh.") ;
+            }
+            else
+            {
+              message.channel.send("Pourfeur.") ;
+            }
+            return ;
+          }
+          else if ( word_to_regex("mais").test(message.content) )
+          {
+            message.channel.send("Juins.") ;
+            return ;
+          }
+          else if ( word_to_regex("qui").test(message.content) )
+          {
+            message.channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
+            return ;
+          }
+          else if ( word_to_regex("comment").test(message.content) )
+          {
+            message.channel.send("-dant Cousteau.") ;
+            return ;
+          }
+          else if ( word_to_regex("oui").test(message.content) )
+          {
+            message.channel.send("-stiti.") ;
+            return ;
+          }
+          else if ( word_to_regex("non").test(message.content) )
+          {
+            message.channel.send("-bril.") ;
+            return ;
+          }
+          else if ( word_to_regex("hein").test(message.content) )
+          {
+            message.channel.send("Deux.") ;
+            is_deux_sent = true ;
+            return ;
+          }
+        }
+      }
+
+      // H
+      {
+        if ( word_to_regex("h", interogative = false).test(message.content) 
+            && Math.random() < Config.proba_h )
+        {
+          let proba = Math.random() ;
+          if ( proba < 0.25 )
           {
             message.channel.send(
               { 
                 content : "",
-                files : ["./files/es_hora_de_dormir.mp4"] 
+                files : ["./files/h/h1.gif"] 
               }
             ) ;
           }
+          else if ( proba >= 0.25 && proba < 0.5 )
+          {
+            message.channel.send(
+              { 
+                content : "",
+                files : ["./files/h/h2.gif"] 
+              }
+            ) ;
+          }
+          else if ( proba >= 0.5 && proba < 0.75 )
+          {
+            message.channel.send(
+              { 
+                content : "",
+                files : ["./files/h/h3.gif"] 
+              }
+            ) ;
+          }
+          else
+          {
+            message.channel.send(
+              { 
+                content : "",
+                files : ["./files/h/h4.gif"] 
+              }
+            ) ;
+          }
+          return ;
         }
+      }
 
-        // Quoifeur, coubeh ; Commentdancousteau etc
+      // Contexte?
+      {
+        if ( word_to_regex("contexte", start_end = false).test(message.content) 
+            && Math.random() < Config.proba_contexte )
         {
-          if ( is_deux_sent && word_to_regex("trois", false, false).test(message.content) )
-          {
-            message.channel.send("Soleil ! <3") ;
-          }
-          is_deux_sent = false ;
-
-          if ( Math.random() < Config.proba_answer_meme )
-          {
-            if ( word_to_regex("goyave", false).test(message.content) )
-            {
-              message.channel.send("Randomisa-hmmmmm.......") ;
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/contexte.jpg"] 
             }
-            else if ( word_to_regex("quoi", true).test(message.content) )
-            {
-              if ( Math.random() < 0.5 ) 
-              {
-                message.channel.send("-coubeh.") ;
-              }
-              else
-              {
-                message.channel.send("Feur.") ;
-              }
-            }
-            else if ( word_to_regex("pourquoi", true).test(message.content) )
-            {
-              if ( Math.random() < 0.5 ) 
-              {
-                message.channel.send("Pourcoubeh.") ;
-              }
-              else
-              {
-                message.channel.send("Pourfeur.") ;
-              }
-            }
-            else if ( word_to_regex("qui", true).test(message.content) )
-            {
-              message.channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
-            }
-            else if ( word_to_regex("comment", true).test(message.content) )
-            {
-              message.channel.send("-dant Cousteau.") ;
-            }
-            else if ( word_to_regex("oui", true).test(message.content) )
-            {
-              message.channel.send("-stiti.") ;
-            }
-            else if ( word_to_regex("non", true).test(message.content) )
-            {
-              message.channel.send("-bril.") ;
-            }
-            else if ( word_to_regex("hein", true).test(message.content) )
-            {
-              message.channel.send("Deux.") ;
-              is_deux_sent = true ;
-            }
-          }
+          ) ;
+          return ;
         }
+      }
 
-        // H
+      // Source?
+      {
+        if ( word_to_regex("source", start_end = false).test(message.content) 
+            && Math.random() < Config.proba_source )
         {
-          if ( message.author.id !== Config.bot_id && message.channel !== secret_channel )
-          {
-            let text = message.content.toLowerCase() ;
-
-            if ( word_to_regex("h", false).test(message.content) && 3 * Math.random() < 1 )
-            {
-              let proba = Math.random() ;
-              if ( proba < 0.25 )
-              {
-                message.channel.send("https://tenor.com/view/letter-h-gif-9063752") ;
-              }
-              else if ( proba >= 0.25 && proba < 0.5 )
-              {
-                message.channel.send("https://tenor.com/view/when-the-h-stock-images-funny-dance-meme-memes-gif-21772997") ;
-              }
-              else if ( proba >= 0.5 && proba < 0.75 )
-              {
-                message.channel.send("https://tenor.com/view/letter-h-h-letter-hhh-hh-h-meme-gif-22388730") ;
-              }
-              else
-              {
-                message.channel.send("https://tenor.com/view/meme-gif-20452123") ;
-              }
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/source.png"] 
             }
-          }
+          ) ;
+          return ;
         }
       }
     }
