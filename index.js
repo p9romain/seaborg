@@ -236,6 +236,21 @@ client.on("messageCreate", message =>
 
         return ;
       }
+
+      if ( message.author.id === Config.nesta_id )
+      {
+        // Zeste délicieux.............
+        if ( Math.random() < Config.proba_nesta )
+        {
+          message.channel.send(
+              { 
+                content : "",
+                files : ["./files/nesta.gif"] 
+              }
+          ) ;
+          return ;
+        }
+      }
       
       // Pee hehe 
       if ( Math.random() < Config.proba_pee )
