@@ -346,6 +346,11 @@ client.on("messageCreate", message =>
             is_deux_sent = true ;
             return ;
           }
+          else if ( word_to_regex("ah").test(message.content) )
+          {
+            message.channel.send(":b:") ;
+            return ;
+          }
         }
       }
 
