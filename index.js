@@ -291,6 +291,12 @@ client.on("messageCreate", message =>
             message.channel.send("Randomisa-hmmmmm.......") ;
             return ;
           }
+          else if ( word_to_regex("quelconque", can_be_interogative = false).test(message.content)
+          )
+          {
+            message.channel.send("Évêque.") ;
+            return ;
+          }
           else if ( word_to_regex("quoi").test(message.content) )
           {
             if ( Math.random() < 0.5 ) 
