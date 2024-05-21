@@ -15,9 +15,9 @@ const client = new Client(
 
 const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
-function word_to_regex(text, interogative = true, start_end = true)
+function word_to_regex(text, can_be_interogative = true, start_end = true)
 {
-  let interr = interogative ? "?\\?" : "" ;
+  let interr = can_be_interogative ? "?\\?" : "" ;
   let word = "" ;
 
   for ( const char of text )
@@ -276,7 +276,7 @@ client.on("messageCreate", message =>
 
       // Quoifeur, coubeh ; Commentdancousteau etc
       {
-        if ( is_deux_sent && word_to_regex("trois", interogative = false, start_end = false).test(message.content) )
+        if ( is_deux_sent && word_to_regex("trois", can_be_interogative = false, start_end = false).test(message.content) )
         {
           message.channel.send("Soleil ! <3") ;
           is_deux_sent = false ;
@@ -286,7 +286,7 @@ client.on("messageCreate", message =>
 
         if ( Math.random() < Config.proba_answer )
         {
-          if ( word_to_regex("goyave", interogative = false).test(message.content) )
+          if ( word_to_regex("goyave", can_be_interogative = false).test(message.content) )
           {
             message.channel.send("Randomisa-hmmmmm.......") ;
             return ;
@@ -346,6 +346,18 @@ client.on("messageCreate", message =>
             is_deux_sent = true ;
             return ;
           }
+          else if ( word_to_regex("merci").test(message.content) )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              message.channel.send("-garette.") ;
+            }
+            else
+            {
+              message.channel.send("De rien.") ;
+            }
+            return ;
+          }
           else if ( word_to_regex("ah").test(message.content) )
           {
             message.channel.send(":b:") ;
@@ -356,7 +368,7 @@ client.on("messageCreate", message =>
 
       // H
       {
-        if ( word_to_regex("h", interogative = false).test(message.content) 
+        if ( word_to_regex("h", can_be_interogative = false).test(message.content) 
             && Math.random() < Config.proba_h )
         {
           let proba = Math.random() ;
