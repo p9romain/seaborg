@@ -51,6 +51,7 @@ friday_night.minute = 0 ;
 
 let general, cacapublier, secret_channel ;
 let old_channel, is_deux_sent ;
+
 client.on("ready", () =>
   {
     general = client.channels.cache.get(Config.general_id) ;
@@ -97,7 +98,7 @@ Schedule.scheduleJob(friday_night, () =>
 // EH OUI LE 7 DECEMBRE
 Schedule.scheduleJob("0 * 7 12 *", () =>
   {
-    if ( Math.proba < 0.25 )
+    if ( Math.random() < Config.proba_burger )
     {
       cacapublier.send(
         { 
@@ -221,6 +222,15 @@ client.on("messageCreate", message =>
     }
     else if ( message.author.id !== Config.bot_id )
     {
+      // Un, deux, trois, soleil !
+      if ( is_deux_sent && word_to_regex("trois", can_be_interogative = false, start_end = false).test(message.content) )
+      {
+        message.channel.send("Soleil ! <3") ;
+        is_deux_sent = false ;
+        return ;
+      }
+        id_deux_sent = false ;
+
       // Answer to ping
       if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) )
       {
@@ -262,7 +272,7 @@ client.on("messageCreate", message =>
       // Need to mimir
       {
         let date = message.createdAt ;
-        if ( Math.random < Config.proba_mimir && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+        if ( Math.random() < Config.proba_mimir && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
         {
           message.channel.send(
             { 
@@ -276,14 +286,6 @@ client.on("messageCreate", message =>
 
       // Quoifeur, coubeh ; Commentdancousteau etc
       {
-        if ( is_deux_sent && word_to_regex("trois", can_be_interogative = false, start_end = false).test(message.content) )
-        {
-          message.channel.send("Soleil ! <3") ;
-          is_deux_sent = false ;
-          return ;
-        }
-        id_deux_sent = false ;
-
         if ( Math.random() < Config.proba_answer )
         {
           if ( word_to_regex("goyave", can_be_interogative = false).test(message.content) )
