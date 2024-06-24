@@ -354,7 +354,7 @@ client.on("messageCreate", message =>
             is_deux_sent = true ;
             return ;
           }
-          else if ( word_to_regex("merci").test(message.content) )
+          else if ( word_to_regex("merci", can_be_interogative = false).test(message.content) )
           {
             if ( Math.random() < 0.5 ) 
             {
