@@ -229,7 +229,7 @@ client.on("messageCreate", message =>
         is_deux_sent = false ;
         return ;
       }
-        id_deux_sent = false ;
+      is_deux_sent = false ;
 
       // Answer to ping
       if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) )
