@@ -177,11 +177,36 @@ client.on("messageCreate", message =>
 
         const text = msg.slice(start, msg.length).join(' ') ; // text to send
         const attachments = message.attachments ;
-        // text, with or without attachements
-        if ( text )
+
+        try 
         {
-          // with attachement
-          if ( attachments.size )
+          // text, with or without attachements
+          if ( text )
+          {
+            // with attachement
+            if ( attachments.size )
+            {
+              let files = []
+              attachments.forEach( (file) =>
+                {
+                  files.push(file) ;
+                }
+              ) ;
+              channel.send(
+                {
+                  content : text,
+                  files : files
+                }
+              ) ;
+            }
+            // without attachement
+            else
+            {
+              channel.send(text) ;
+            }
+          }
+          // just attachements
+          else if ( attachments.size )
           {
             let files = []
             attachments.forEach( (file) =>
@@ -191,33 +216,13 @@ client.on("messageCreate", message =>
             ) ;
             channel.send(
               {
-                content : text,
+                content : "",
                 files : files
               }
             ) ;
           }
-          // without attachement
-          else
-          {
-            channel.send(text) ;
-          }
-        }
-        // just attachements
-        else if ( attachments.size )
-        {
-          let files = []
-          attachments.forEach( (file) =>
-            {
-              files.push(file) ;
-            }
-          ) ;
-          channel.send(
-            {
-              content : "",
-              files : files
-            }
-          ) ;
-        }
+        } 
+        catch {} // just a perm error so we ignore
       }
     }
     else if ( message.author.id !== Config.bot_id )
