@@ -264,14 +264,27 @@ client.on("messageCreate", message =>
       // Answer to ping
       if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) )
       {
-        if ( message.author.id === Config.owner_id )
+        let proba = Math.random() ;
+        if ( proba < 0.2 )
         {
           message.channel.send("fdp ne me ping pas stp") ;
           message.channel.send("<:sea_pakontan:945802134803345459>") ;
         }
-        else
+        else if ( proba < 0.4 )
         {
           message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
+        }
+        else if ( proba < 0.6 )
+        {
+          message.channel.send("Qu'est-ce qui y a là, d'où tu me ping ?") ;
+        }
+        else if ( proba < 0.8 )
+        {
+          message.channel.send(`Pong <@${message.author.id}>`) ;
+        }
+        else
+        {
+          message.channel.send("Tu veux me ping ? Bah tiens cheh @everyone") ;
         }
 
         return ;
@@ -419,7 +432,7 @@ client.on("messageCreate", message =>
               }
             ) ;
           }
-          else if ( proba >= 0.25 && proba < 0.5 )
+          else if ( proba < 0.5 )
           {
             message.channel.send(
               { 
@@ -428,7 +441,7 @@ client.on("messageCreate", message =>
               }
             ) ;
           }
-          else if ( proba >= 0.5 && proba < 0.75 )
+          else if ( proba < 0.75 )
           {
             message.channel.send(
               { 
