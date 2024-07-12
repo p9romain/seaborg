@@ -74,12 +74,37 @@ client.login(Config.token) ;
 // Nous sommes vendredi
 Schedule.scheduleJob(vendredi, () =>
   {
-    general.send(
-      { 
-        content : "_Merci Manu._", 
-        files : ["./files/vendredi.png"] 
-      }
-    ) ;
+    let p1 = Math.random() ;
+    let p2 = (p1 + 1)/2 ;
+
+    let proba = Math.random() ;
+    if ( proba < p1 )
+    {
+      general.send(
+        { 
+          content : "_Merci la Méluche._", 
+          files : ["./files/vendredi/gauche.mp4"] 
+        }
+      ) ;
+    }
+    else if ( proba < p2 )
+    {
+      general.send(
+        { 
+          content : "_Merci Manu._", 
+          files : ["./files/vendredi/droite.mp4"] 
+        }
+      ) ;
+    }
+    else
+    {
+      general.send(
+        { 
+          content : "_Merci Manu²._", 
+          files : ["./files/vendredi/image.png"] 
+        }
+      ) ;
+    }
   }
 ) ;
 
