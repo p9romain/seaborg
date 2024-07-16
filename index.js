@@ -284,7 +284,14 @@ client.on("messageCreate", message =>
         }
         else
         {
-          message.channel.send("Tu veux me ping ? Bah tiens cheh @everyone") ;
+          message.guild.members.fetch().then(members => 
+            {
+              message.channel.send(
+                "Tu veux me ping ? Bah tiens cheh à " +
+                members.random().user.toString()
+              ) ;
+            }
+          );
         }
 
         return ;
