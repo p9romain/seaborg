@@ -35,8 +35,26 @@ function word_to_regex(text, can_be_interogative = true, start_end = true)
   }
 }
 
+function isRegexpChecked(messsage, texts, can_be_interogative = true)
+{
+  let res = false ;
+  if ( Math.random() < Config.proba_answer ) 
+  {
+    for (const text of texts)
+    {
+      if ( word_to_regex(text, can_be_interogative, start_end = false).test(message) )
+      {
+        res = true ;
+        break ;
+      }
+    }
+  }
+
+  return res ;
+}
+
 /*
-    ====================================================================================
+    ============================================================================
 */
 
 const vendredi = new Schedule.RecurrenceRule() ;
@@ -68,7 +86,7 @@ client.on("ready", () =>
 client.login(Config.token) ;
 
 /*
-    ====================================================================================
+    ============================================================================
 */
 
 // Nous sommes vendredi
@@ -348,91 +366,89 @@ client.on("messageCreate", message =>
 
       // Quoifeur, coubeh ; Commentdancousteau etc
       {
-        if ( Math.random() < Config.proba_answer )
+        let message, channel = [ message.content, message.channel ] ;
+
+        if ( isRegexpChecked(message, [ "goyave" ], can_be_interogative = false) )
         {
-          if ( word_to_regex("goyave", can_be_interogative = false).test(message.content) )
+          channel.send("Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "quelconque" ], can_be_interogative = false) )
+        {
+          channel.send("Évêque.") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "quoi", "kwa", "coua", "koa", "qoua", "koua", "qwa" ]) )
+        {
+          if ( Math.random() < 0.5 ) 
           {
-            message.channel.send("Randomisa-hmmmmm.......") ;
-            return ;
+            channel.send("-coubeh.") ;
           }
-          else if ( word_to_regex("quelconque", can_be_interogative = false).test(message.content)
-          )
+          else
           {
-            message.channel.send("Évêque.") ;
-            return ;
+            channel.send("Feur.") ;
           }
-          else if ( word_to_regex("quoi").test(message.content) )
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "pourquoi", "pourkwa", "pourcoua", "pourkoa", "pourqoua", "pourkoua", "pourqwa", "pk", "pq" ]) )
+        {
+          if ( Math.random() < 0.5 ) 
           {
-            if ( Math.random() < 0.5 ) 
-            {
-              message.channel.send("-coubeh.") ;
-            }
-            else
-            {
-              message.channel.send("Feur.") ;
-            }
-            return ;
+            channel.send("Pourcoubeh.") ;
           }
-          else if ( word_to_regex("pourquoi").test(message.content) )
+          else
           {
-            if ( Math.random() < 0.5 ) 
-            {
-              message.channel.send("Pourcoubeh.") ;
-            }
-            else
-            {
-              message.channel.send("Pourfeur.") ;
-            }
-            return ;
+            channel.send("Pourfeur.") ;
           }
-          else if ( word_to_regex("mais").test(message.content) )
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "mais", "mai", "mes", "mé", "meh" ]) )
+        {
+          channel.send("Juins.") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "qui", "ki" ]) )
+        {
+          channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "comment", "koman" ]) )
+        {
+          channel.send("-dant Cousteau.") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "oui", "wii", "ui", "wee", "we", "woui", "vi", "vee" ]) )
+        {
+          channel.send("-stiti.") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "non" ]) )
+        {
+          channel.send("-bril.") ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "hein", "uh", "huh" ]) )
+        {
+          channel.send("Deux.") ;
+          is_deux_sent = true ;
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "merci", "merchi", "merki" ], can_be_interogative = false) )
+        {
+          if ( Math.random() < 0.5 ) 
           {
-            message.channel.send("Juins.") ;
-            return ;
+            channel.send("-garette.") ;
           }
-          else if ( word_to_regex("qui").test(message.content) )
+          else
           {
-            message.channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
-            return ;
+            channel.send("De rien.") ;
           }
-          else if ( word_to_regex("comment").test(message.content) )
-          {
-            message.channel.send("-dant Cousteau.") ;
-            return ;
-          }
-          else if ( word_to_regex("oui").test(message.content) )
-          {
-            message.channel.send("-stiti.") ;
-            return ;
-          }
-          else if ( word_to_regex("non").test(message.content) )
-          {
-            message.channel.send("-bril.") ;
-            return ;
-          }
-          else if ( word_to_regex("hein").test(message.content) )
-          {
-            message.channel.send("Deux.") ;
-            is_deux_sent = true ;
-            return ;
-          }
-          else if ( word_to_regex("merci", can_be_interogative = false).test(message.content) )
-          {
-            if ( Math.random() < 0.5 ) 
-            {
-              message.channel.send("-garette.") ;
-            }
-            else
-            {
-              message.channel.send("De rien.") ;
-            }
-            return ;
-          }
-          else if ( word_to_regex("ah").test(message.content) )
-          {
-            message.channel.send(":b:") ;
-            return ;
-          }
+          return ;
+        }
+        else if ( isRegexpChecked(message, [ "ah", "a" ]) )
+        {
+          channel.send(":b:") ;
+          return ;
         }
       }
 
