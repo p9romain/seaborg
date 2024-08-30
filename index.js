@@ -16,22 +16,21 @@ const client = new Client(
 
 const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
-function wouldAnswer(message, words, proba = Config.proba_answer)
+function regexifyWord(text)
 {
+  let word = "" ;
 
-  function regexifyWord(text)
+  for ( const char of text )
   {
-    let word = "" ;
-
-    for ( const char of text )
-    {
-      word += char + '+' + fillers ;
-    }
-
-    return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", 
-                "ui") ;
+    word += char + '+' + fillers ;
   }
 
+  return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", 
+              "ui") ;
+}
+
+function wouldAnswer(message, words, proba = Config.proba_answer)
+{
   let res = false ;
   for (const word of words)
   {
@@ -262,6 +261,36 @@ client.on("messageCreate", message =>
     }
     else if ( message.author.id !== Config.bot_id )
     {
+      // Je suis....
+      {
+        let nickname = message.content ;
+        let do_rename = false ;
+
+        [ "je suis", "js", "suis", "chui", "jsuis" ].forEach(word =>
+          {
+            console.log(nickname) ;
+            let re = regexifyWord(word) ;
+            if ( re.test(nickname) )
+            {
+              do_rename = true ;
+              let split = nickname.split(re) ;
+              nickname = split[split.findLastIndex(f => f)].trim() ;
+            }
+            console.log(nickname) ;
+            console.log() ;
+          }
+        )
+
+        if ( do_rename )
+        {
+          try
+          {
+            message.member.setNickname(nickname.slice(0, 32)) ;
+          }
+          catch (_) {}
+        }
+      }
+
       // Un, deux, trois, soleil !
       if ( is_deux_sent && 
            wouldAnswer(message.content, [ "trois" ], proba = 2))
