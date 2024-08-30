@@ -351,18 +351,19 @@ client.on("messageCreate", message =>
              proba = Config.proba_btr)
           )
       {
-        console.log("FEUR DEBUT") ;
-        for ( meme in fs.readdirSync("./files/btr") )
-        {
-          // message.channel.send(
-          //   { 
-          //     content : "",
-          //     files : [""] 
-          //   }
-          // ) ;
-          console.log(meme) ;
-        }
-        console.log("FEUR FIN") ;
+        message.channel.send(
+          "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:") ;
+        fs.readdirSync("./files/btr/").forEach(file =>
+          {
+            message.channel.send(
+              { 
+                content : "",
+                files : ["./files/btr/" + file] 
+              }
+            ) ;
+          }
+        ) ;
+
         return ;
       }
 
