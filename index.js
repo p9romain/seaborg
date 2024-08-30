@@ -268,7 +268,6 @@ client.on("messageCreate", message =>
 
         [ "je suis", "js", "suis", "chui", "jsuis" ].forEach(word =>
           {
-            console.log(nickname) ;
             let re = regexifyWord(word) ;
             if ( re.test(nickname) )
             {
@@ -276,8 +275,6 @@ client.on("messageCreate", message =>
               let split = nickname.split(re) ;
               nickname = split[split.findLastIndex(f => f)].trim() ;
             }
-            console.log(nickname) ;
-            console.log() ;
           }
         )
 
@@ -289,6 +286,17 @@ client.on("messageCreate", message =>
           }
           catch (_) {}
         }
+      }
+
+      // Bref.
+      if ( wouldAnswer(message.content, [ "bref" ], proba = Config.proba_bref) )
+      {
+        message.channel.send(
+          { 
+            content : "Bref.",
+            files : ["./files/bref.gif"] 
+          }
+        ) ;
       }
 
       // Un, deux, trois, soleil !
