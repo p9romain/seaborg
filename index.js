@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits } = require("discord.js") ;
 const Config = require("./config.json") ;
-const Schedule = require('node-schedule') ;
+const Schedule = require("node-schedule") ;
+const fs = require("fs");
 
 const client = new Client(
   {
@@ -15,42 +16,33 @@ const client = new Client(
 
 const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
-function word_to_regex(text, can_be_interogative = true, start_end = true)
+function wouldAnswer(message, words, proba = Config.proba_answer)
 {
-  let interr = can_be_interogative ? "?\\?" : "" ;
-  let word = "" ;
 
-  for ( const char of text )
+  function regexifyWord(text)
   {
-    word += char + '+' + fillers ;
-  }
+    let word = "" ;
 
-  if ( start_end )
-  {
-    return new RegExp("(^|\\s)" + word + "($|\\s" + interr + ")", "ui") ;
-  }
-  else
-  {
-    return new RegExp(word, "ui") ;
-  }
-}
-
-function isRegexpChecked(messsage, texts, can_be_interogative = true)
-{
-  let res = false ;
-  if ( Math.random() < Config.proba_answer ) 
-  {
-    for (const text of texts)
+    for ( const char of text )
     {
-      if ( word_to_regex(text, can_be_interogative, start_end = false).test(message) )
-      {
-        res = true ;
-        break ;
-      }
+      word += char + '+' + fillers ;
+    }
+
+    return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", 
+                "ui") ;
+  }
+
+  let res = false ;
+  for (const word of words)
+  {
+    if ( regexifyWord(word).test(message) )
+    {
+      res = true ;
+      break ;
     }
   }
 
-  return res ;
+  return res && Math.random() < proba ;
 }
 
 /*
@@ -271,7 +263,8 @@ client.on("messageCreate", message =>
     else if ( message.author.id !== Config.bot_id )
     {
       // Un, deux, trois, soleil !
-      if ( is_deux_sent && word_to_regex("trois", can_be_interogative = false, start_end = false).test(message.content) )
+      if ( is_deux_sent && 
+           wouldAnswer(message.content, [ "trois" ], proba = 2))
       {
         message.channel.send("Soleil ! <3") ;
         is_deux_sent = false ;
@@ -280,7 +273,9 @@ client.on("messageCreate", message =>
       is_deux_sent = false ;
 
       // Answer to ping
-      if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message.content) )
+      if ( (new RegExp(`(^|\\s)<@${Config.bot_id}>($|\\s\\??|\\?)`, "ui"))
+             .test(message.content)
+         )
       {
         let proba = Math.random() ;
         if ( proba < 0.2 )
@@ -349,10 +344,33 @@ client.on("messageCreate", message =>
         return ;
       }
 
+      // BTR MENTIONED????!!!??!?!?!!,,,,,,
+      if ( wouldAnswer(message.content, 
+             [ "btr", "bocchi", "ryo", "kita", 
+               "nijika", "seika", "pa", "kikuri" ], 
+             proba = Config.proba_btr)
+          )
+      {
+        console.log("FEUR DEBUT") ;
+        for ( meme in fs.readdirSync("./files/btr") )
+        {
+          // message.channel.send(
+          //   { 
+          //     content : "",
+          //     files : [""] 
+          //   }
+          // ) ;
+          console.log(meme) ;
+        }
+        console.log("FEUR FIN") ;
+        return ;
+      }
+
       // Need to mimir
       {
         let date = message.createdAt ;
-        if ( Math.random() < Config.proba_mimir && ( date.getHours() >= 2 && date.getHours() <= 5 ) )
+        if ( Math.random() < Config.proba_mimir 
+             && date.getHours() >= 2 && date.getHours() <= 5 )
         {
           message.channel.send(
             { 
@@ -366,19 +384,21 @@ client.on("messageCreate", message =>
 
       // Quoifeur, coubeh ; Commentdancousteau etc
       {
-        let message, channel = [ message.content, message.channel ] ;
+        let [ text, channel ] = [ message.content, message.channel ] ;
 
-        if ( isRegexpChecked(message, [ "goyave" ], can_be_interogative = false) )
+        if ( wouldAnswer(text, [ "goyave" ]) )
         {
           channel.send("Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "quelconque" ], can_be_interogative = false) )
+        else if ( wouldAnswer(text, [ "quelconque" ]) )
         {
           channel.send("Évêque.") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "quoi", "kwa", "coua", "koa", "qoua", "koua", "qwa" ]) )
+        else if ( wouldAnswer(text, 
+                    [ "quoi", "kwa", "coua", "koa", "qoua", "koua", "qwa" ])
+                )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -390,7 +410,10 @@ client.on("messageCreate", message =>
           }
           return ;
         }
-        else if ( isRegexpChecked(message, [ "pourquoi", "pourkwa", "pourcoua", "pourkoa", "pourqoua", "pourkoua", "pourqwa", "pk", "pq" ]) )
+        else if ( wouldAnswer(text, 
+                    [ "pourquoi", "pourkwa", "pourcoua", "pourkoa", 
+                      "pourqoua", "pourkoua", "pourqwa", "pk", "pq" ]) 
+                )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -402,38 +425,41 @@ client.on("messageCreate", message =>
           }
           return ;
         }
-        else if ( isRegexpChecked(message, [ "mais", "mai", "mes", "mé", "meh" ]) )
+        else if ( wouldAnswer(text, [ "mais", "mai", "mes", "mé", "meh" ]) )
         {
           channel.send("Juins.") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "qui", "ki" ]) )
+        else if ( wouldAnswer(text, [ "qui", "ki" ]) )
         {
           channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "comment", "koman" ]) )
+        else if ( wouldAnswer(text, [ "comment", "koman" ]) )
         {
           channel.send("-dant Cousteau.") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "oui", "wii", "ui", "wee", "we", "woui", "vi", "vee" ]) )
+        else if ( wouldAnswer(text, 
+                    [ "oui", "wii", "ui", "wee", 
+                      "we", "woui", "vi", "vee" ]) 
+                )
         {
           channel.send("-stiti.") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "non" ]) )
+        else if ( wouldAnswer(text, [ "non" ]) )
         {
           channel.send("-bril.") ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "hein", "uh", "huh" ]) )
+        else if ( wouldAnswer(text, [ "hein", "uh", "huh" ]) )
         {
           channel.send("Deux.") ;
           is_deux_sent = true ;
           return ;
         }
-        else if ( isRegexpChecked(message, [ "merci", "merchi", "merki" ], can_be_interogative = false) )
+        else if ( wouldAnswer(text, [ "merci", "merchi", "merki" ]) )
         {
           if ( Math.random() < 0.5 ) 
           {
@@ -445,7 +471,7 @@ client.on("messageCreate", message =>
           }
           return ;
         }
-        else if ( isRegexpChecked(message, [ "ah", "a" ]) )
+        else if ( wouldAnswer(text, [ "ah", "a" ]) )
         {
           channel.send(":b:") ;
           return ;
@@ -453,79 +479,74 @@ client.on("messageCreate", message =>
       }
 
       // H
+      if ( wouldAnswer(message.content, [ "h" ], proba = Config.proba_h) )
       {
-        if ( word_to_regex("h", can_be_interogative = false).test(message.content) 
-            && Math.random() < Config.proba_h )
+        let proba = Math.random() ;
+        if ( proba < 0.25 )
         {
-          let proba = Math.random() ;
-          if ( proba < 0.25 )
-          {
-            message.channel.send(
-              { 
-                content : "",
-                files : ["./files/h/h1.gif"] 
-              }
-            ) ;
-          }
-          else if ( proba < 0.5 )
-          {
-            message.channel.send(
-              { 
-                content : "",
-                files : ["./files/h/h2.gif"] 
-              }
-            ) ;
-          }
-          else if ( proba < 0.75 )
-          {
-            message.channel.send(
-              { 
-                content : "",
-                files : ["./files/h/h3.gif"] 
-              }
-            ) ;
-          }
-          else
-          {
-            message.channel.send(
-              { 
-                content : "",
-                files : ["./files/h/h4.gif"] 
-              }
-            ) ;
-          }
-          return ;
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/h/h1.gif"] 
+            }
+          ) ;
         }
+        else if ( proba < 0.5 )
+        {
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/h/h2.gif"] 
+            }
+          ) ;
+        }
+        else if ( proba < 0.75 )
+        {
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/h/h3.gif"] 
+            }
+          ) ;
+        }
+        else
+        {
+          message.channel.send(
+            { 
+              content : "",
+              files : ["./files/h/h4.gif"] 
+            }
+          ) ;
+        }
+        return ;
       }
 
       // Contexte?
+      if ( wouldAnswer(message.content, [ "contexte" ], 
+             proba = Config.proba_contexte)
+         )
       {
-        if ( word_to_regex("contexte", start_end = false).test(message.content) 
-            && Math.random() < Config.proba_contexte )
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/contexte.jpg"] 
-            }
-          ) ;
-          return ;
-        }
+        message.channel.send(
+          { 
+            content : "",
+            files : ["./files/contexte.jpg"] 
+          }
+        ) ;
+        return ;
       }
 
       // Source?
+      if ( wouldAnswer(message.content, [ "source" ],
+             proba = Config.proba_source)
+         )
       {
-        if ( word_to_regex("source", start_end = false).test(message.content) 
-            && Math.random() < Config.proba_source )
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/source.png"] 
-            }
-          ) ;
-          return ;
-        }
+        message.channel.send(
+          { 
+            content : "",
+            files : ["./files/source.png"] 
+          }
+        ) ;
+        return ;
       }
     }
   }
