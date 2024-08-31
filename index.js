@@ -14,7 +14,44 @@ const client = new Client(
   }
 ) ;
 
-const fillers = "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
+const DEBUG_MODE = false ;
+
+/*
+    ============================================================================
+*/
+
+function getTime(date)
+{
+  return date.toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris" }) ;
+}
+
+function getDate(date)
+{
+  return date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" }) ;
+}
+
+function debugInfo(channel, author, tag, error = false, verbose = false)
+{
+  console.log(`[${error ? "ERROR" : "DEBUG"}] ${tag}`) ;
+
+  if ( verbose || error )
+  {
+    let now = new Date(Date.now()) ;
+
+    console.log("------------------------------------\n"
+        + "             DEBUG INFO \n------------------------------------") ;
+
+    console.log(`In : ${channel.name}`) ;
+    console.log(`At : ${getDate(now)}, ${getTime(now)}`) ;
+    console.log(`Triggered by : ${author ? author.displayName : "No-one"}`) ;
+
+    console.log("------------------------------------\n"
+        + "             DEBUG INFO \n------------------------------------") ;
+  }
+}
+
+const fillers = 
+  "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
 
 function regexifyWord(text)
 {
@@ -44,6 +81,28 @@ function wouldAnswer(message, words, proba = Config.proba_answer)
   return res && Math.random() < proba ;
 }
 
+function sendMessage(tag, channel, message_text, message_attach = [], debug = true, author = null)
+{    
+  try
+  {
+    debugInfo(channel, author, tag, verbose = DEBUG_MODE && debug) ;
+
+    channel.send(
+      { 
+        content : message.content,
+        files : message_attach
+      }
+    ) ;
+  }
+  catch ( e )
+  {
+    debugInfo(channel, author, tag, error = true) ;
+    console.log(e) ;
+    console.log() ;
+    console.log() ;
+  }
+}
+
 /*
     ============================================================================
 */
@@ -58,19 +117,25 @@ friday_night.dayOfWeek = 5 ;
 friday_night.hour = 20 ;
 friday_night.minute = 0 ;
 
-let general, cacapublier, secret_channel ;
+let general, cacapublier, pissoir, secret_channel ;
 let old_channel, is_deux_sent ;
 
 client.on("ready", () =>
   {
     general = client.channels.cache.get(Config.general_id) ;
     cacapublier = client.channels.cache.get(Config.cacapublier_id) ;
+    pissoir = client.channels.cache.get(Config.pissoir_id) ;
     secret_channel = client.channels.cache.get(Config.secret_channel_id) ;
 
     old_channel = general ;
     is_deux_sent = false ;
 
-    console.log("Ready") ;
+    console.log() ;
+    console.log() ;
+    console.log("====================================\n"
+      + "               Ready \n====================================") ;
+    console.log() ;
+    console.log() ;
   }
 ) ;
 
@@ -89,30 +154,21 @@ Schedule.scheduleJob(vendredi, () =>
     let proba = Math.random() ;
     if ( proba < p1 )
     {
-      general.send(
-        { 
-          content : "_Merci la Méluche._", 
-          files : ["./files/vendredi/gauche.mp4"] 
-        }
-      ) ;
+      sendMessage("Vendredi matin", general,
+        "_Merci la Méluche._", 
+        message_attach = ["./files/vendredi/gauche.mp4"]) ;
     }
     else if ( proba < p2 )
     {
-      general.send(
-        { 
-          content : "_Merci Manu._", 
-          files : ["./files/vendredi/droite.mp4"] 
-        }
-      ) ;
+      sendMessage("Vendredi matin", general,
+        "_Merci Manu._", 
+        message_attach = ["./files/vendredi/droite.mp4"]) ;
     }
     else
     {
-      general.send(
-        { 
-          content : "_Merci Manu²._", 
-          files : ["./files/vendredi/image.png"] 
-        }
-      ) ;
+      sendMessage("Vendredi matin", general,
+        "_Merci Manu²._", 
+        message_attach = ["./files/vendredi/image.png"]) ;
     }
   }
 ) ;
@@ -120,12 +176,12 @@ Schedule.scheduleJob(vendredi, () =>
 // It's Friday night !
 Schedule.scheduleJob(friday_night, () =>
   {
-    general.send(
-      { 
-        content : "# <a:sea_fridaynight1:945779538519015424><a:sea_fridaynight2:945779540129611786> Time to dance !! <a:sea_fridaynight1:945779538519015424><a:sea_fridaynight2:945779540129611786>",
-        files : ["./files/friday_night.mp4"] 
-      }
-    ) ;
+    sendMessage("Vendredi soir", general, 
+      "# <a:sea_fridaynight1:945779538519015424>"
+        + "<a:sea_fridaynight2:945779540129611786> Time to dance !! "
+        + "<a:sea_fridaynight1:945779538519015424>"
+        + "<a:sea_fridaynight2:945779540129611786>",
+      message_attach = ["./files/friday_night.mp4"]) ;
   }
 ) ;
 
@@ -134,12 +190,9 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
   {
     if ( Math.random() < Config.proba_burger )
     {
-      cacapublier.send(
-        { 
-          content : "# :hamburger: EH OUI :hamburger:",
-          files : ["./files/eh_oui.mp4"] 
-        }
-      ) ;
+      sendMessage("7 Décembre", cacapublier,
+        "# :hamburger: EH OUI :hamburger:",
+        message_attach = ["./files/eh_oui.mp4"]) ;
     }
   }
 ) ;
@@ -147,28 +200,31 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
 // Birthdays
 client.on("ready", () =>
   {
-    Config.birthdays.forEach( (birthday) =>
+    Config.birthdays.forEach(birthday =>
       {
         Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
           {
             let users = "" ;
             let first_names = "" ;
-            birthday.users.forEach( (user) =>
+            birthday.users.forEach(user =>
               {
                 users += "<@" + user.id + "> " ;
                 first_names += user.comment + " " ;
               }
             ) ;
 
-            console.log("Anniv(s) de : " + first_names + "(" + birthday.date + ")") ;
+            console.log(`Anniv(s) de : ${first_names}(${birthday.date})`);
 
-            general.send(":index_pointing_at_the_viewer:") ;
+            general.send(":index_pointing_at_the_viewer:"
+              + ":index_pointing_at_the_viewer:"
+              + ":index_pointing_at_the_viewer:") ;
             general.send(users) ; 
             general.send("** **") ;
             general.send(":palm_up_hand::birthday:") ; 
             general.send("** **") ;
             general.send("** **") ;
-            general.send(`:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
+            general.send(
+              `:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
           }
         ) ;
       }
@@ -179,17 +235,26 @@ client.on("ready", () =>
 
 client.on("messageCreate", message =>
   {
-    if ( message.channel === secret_channel )
+    const channel = message.channel ;
+    const author = message.author ;
+    const message_text = message.content ;
+
+    if ( channel === secret_channel )
     {
-      if ( message.content === "@stop" )
+      if ( message_text === "@stop" )
       {
-        console.log("Stop") ;
+        console.log() ;
+        console.log() ;
+        console.log("====================================\n                Stop \n====================================") ;
+        console.log() ;
+        console.log() ;
         process.exit(0) ; 
       }
+
       // TALK MY CHILD !!!!
       else
       {
-        const msg = message.content.split(' ') ; // whole message
+        const msg = message_text.split(' ') ; // whole message
         let channel ;
         let start ;
 
@@ -212,134 +277,122 @@ client.on("messageCreate", message =>
         const text = msg.slice(start, msg.length).join(' ') ; // text to send
         const attachments = message.attachments ;
 
-        try 
-        {
           // text, with or without attachements
-          if ( text )
-          {
-            // with attachement
-            if ( attachments.size )
-            {
-              let files = []
-              attachments.forEach( (file) =>
-                {
-                  files.push(file) ;
-                }
-              ) ;
-              channel.send(
-                {
-                  content : text,
-                  files : files
-                }
-              ) ;
-            }
-            // without attachement
-            else
-            {
-              channel.send(text) ;
-            }
-          }
-          // just attachements
-          else if ( attachments.size )
+        if ( text )
+        {
+          // with attachement
+          if ( attachments.size )
           {
             let files = []
-            attachments.forEach( (file) =>
+            attachments.forEach(file =>
               {
                 files.push(file) ;
               }
             ) ;
-            channel.send(
-              {
-                content : "",
-                files : files
-              }
-            ) ;
+            sendMessage("Talking bot (file.s, text)", channel, text, 
+              message_attach = files,
+              debug = false) ;
           }
-        } 
-        catch {} // just a perm error so we ignore
+          // without attachement
+          else
+          {
+            sendMessage("Talking bot (text)", channel, text,
+                        debug = false) ;
+          }
+        }
+        // just attachements
+        else if ( attachments.size )
+        {
+          let files = []
+          attachments.forEach(file =>
+            {
+              files.push(file) ;
+            }
+          ) ;
+          sendMessage("Talking bot (file.s)", channel, "", 
+              message_attach = files,
+              debug = false) ;
+        }
       }
     }
-    else if ( message.author.id !== Config.bot_id )
+    else if ( author.id !== Config.bot_id )
     {
+
       // Je suis....
       {
-        let nickname = message.content ;
+        let nickname = message_text ;
         let do_rename = false ;
 
-        [ "je suis", "js", "suis", "chui", "jsuis" ].forEach(word =>
-          {
-            let re = regexifyWord(word) ;
-            if ( re.test(nickname) )
+        [ "je suis", "js", "suis", "chui", "jsuis" ]
+          .forEach(word =>
             {
-              do_rename = true ;
-              let split = nickname.split(re) ;
-              nickname = split[split.findLastIndex(f => f)].trim() ;
+              let re = regexifyWord(word) ;
+              if ( re.test(nickname) )
+              {
+                do_rename = true ;
+                let split = nickname.split(re) ;
+                nickname = split[split.findLastIndex(f => f)].trim() ;
+              }
             }
-          }
-        )
+          )
 
         if ( do_rename )
         {
           try
           {
-            message.member.setNickname(nickname.slice(0, 32)) ;
+            let new_nickname = nickname.slice(0, 32) ; 
+
+            debugInfo(channel, author, 
+              `Nicknaming to ${new_nickname}`, 
+              verbose = DEBUG_MODE) ;
+
+            message.member.setNickname(new_nickname) ;
           }
-          catch (_) {}
+          catch ( e ) 
+          { 
+            debugInfo(channel, author, "Nicknaming", 
+              error = true) ;
+            console.log(e) ;
+            console.log() ;
+            console.log() ;
+          }
+
+          return ;
         }
       }
 
-      // Bref.
-      if ( wouldAnswer(message.content, [ "bref" ], proba = Config.proba_bref) )
-      {
-        message.channel.send(
-          { 
-            content : "Bref.",
-            files : ["./files/bref.gif"] 
-          }
-        ) ;
-      }
-
-      // Un, deux, trois, soleil !
-      if ( is_deux_sent && 
-           wouldAnswer(message.content, [ "trois" ], proba = 2))
-      {
-        message.channel.send("Soleil ! <3") ;
-        is_deux_sent = false ;
-        return ;
-      }
-      is_deux_sent = false ;
-
       // Answer to ping
-      if ( (new RegExp(`(^|\\s)<@${Config.bot_id}>($|\\s\\??|\\?)`, "ui"))
-             .test(message.content)
-         )
+      if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message_text) )
       {
         let proba = Math.random() ;
+
         if ( proba < 0.2 )
         {
-          message.channel.send("fdp ne me ping pas stp") ;
-          message.channel.send("<:sea_pakontan:945802134803345459>") ;
+          sendMessage("Ping (pakontan)", channel,
+            "<:sea_pakontan:945802134803345459>", author) ;
         }
         else if ( proba < 0.4 )
         {
-          message.channel.send("Je vous prie de bien vouloir arrêter de me \"ping\", comme disent les jeunes. :heart::call_me:") ;
+          sendMessage("Ping (poli)", channel,
+            "Je vous prie de bien vouloir arrêter de me \"ping\", "
+            + "comme disent les jeunes. :heart::call_me:", author) ;
         }
         else if ( proba < 0.6 )
         {
-          message.channel.send("Qu'est-ce qui y a là, d'où tu me ping ?") ;
+          sendMessage("Ping (question)", channel, 
+            "Qu'est-ce qui y a là, d'où tu me ping ?", author) ;
         }
         else if ( proba < 0.8 )
         {
-          message.channel.send(`Pong <@${message.author.id}>`) ;
+          sendMessage("Ping (pong)", channel, `Pong <@${author.id}>`, author) ;
         }
         else
         {
           message.guild.members.fetch().then(members => 
             {
-              message.channel.send(
-                "Tu veux me ping ? Bah tiens cheh à " +
-                members.random().user.toString()
-              ) ;
+              let ping = "Tu veux me ping ? Bah tiens cheh à " 
+                + members.random().user.toString() ;
+              sendMessage("Ping (random)", channel, ping, author) ;
             }
           );
         }
@@ -347,244 +400,244 @@ client.on("messageCreate", message =>
         return ;
       }
 
-      // CURSE OF RA
-      if ( Math.random() < Config.proba_curse )
+      if ( channel !== pissoir )
       {
-        for ( let i = 0 ; i < Math.floor( 100 * Math.random() ) ; i++ )
+        // Bref.
+        if ( wouldAnswer(message_text, [ "bref" ], proba = Config.proba_bref) )
         {
-          message.channel.send("CURSE OF RA 𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩 𓀪 𓀫 𓀬 𓀭 𓀲 𓀳 𓀴 𓀵 𓀶 𓀷 𓀸 𓀹 𓀺 𓀻 𓀼 𓀽 𓀾 𓀿 𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁍 𓁎 𓁏 𓁐 𓁑") ;
-          for ( let j = 0 ; j < Math.floor( 100 * Math.random() ) ; j++ )
-          {
-            message.channel.send("** **") ;
-          }
+          sendMessage("Bref", channel, "Bref.", 
+            message_attach = ["./files/bref.gif"] , author) ;
+          return ;
         }
-        return ;
-      }
 
-      // Zeste délicieux.............
-      if ( message.author.id === Config.nesta_id 
-        && Math.random() < Config.proba_nesta )
-      {
-        message.channel.send(
-            { 
-              content : "",
-              files : ["./files/nesta.gif"] 
-            }
-        ) ;
-        return ;
-      }
-      
-      // Pee hehe 
-      if ( Math.random() < Config.proba_pee )
-      {
-        message.channel.send(`*pees in ur ass* <@${message.author.id}>`) ;
-        return ;
-      }
+        // Un, deux, trois, soleil !
+        if ( is_deux_sent && 
+             wouldAnswer(message_text, [ "trois" ], proba = 2))
+        {
+          sendMessage("Trois-Soleil", channel, "Soleil ! <3", author) ;
+          is_deux_sent = false ;
+          return ;
+        }
+        is_deux_sent = false ;
 
-      // BTR MENTIONED????!!!??!?!?!!,,,,,,
-      if ( wouldAnswer(message.content, 
-             [ "btr", "bocchi", "ryo", "kita", 
-               "nijika", "seika", "pa", "kikuri" ], 
-             proba = Config.proba_btr)
-          )
-      {
-        message.channel.send(
-          "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:") ;
-        fs.readdirSync("./files/btr/").forEach(file =>
+        // CURSE OF RA
+        if ( Math.random() < Config.proba_curse )
+        {
+          try
           {
-            message.channel.send(
-              { 
-                content : "",
-                files : ["./files/btr/" + file] 
+            console.log("[DEBUG] Curse of Ra") ;
+            for ( let i = 0 ; i < Math.floor( 100 * Math.random() ) ; i++ )
+            {
+              channel.send("CURSE OF RA 𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩 𓀪 𓀫 𓀬 𓀭 𓀲 𓀳 𓀴 𓀵 𓀶 𓀷 𓀸 𓀹 𓀺 𓀻 𓀼 𓀽 𓀾 𓀿 𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁍 𓁎 𓁏 𓁐 𓁑") ;
+              for ( let j = 0 ; j < Math.floor( 100 * Math.random() ) ; j++ )
+              {
+                channel.send("** **") ;
+              }
+            }
+          }
+          catch ( e )
+          {
+            console.log("[ERROR] Curse of Ra :") ;
+            console.log(e) ;
+            console.log() ;
+          }
+          return ;
+        }
+
+        // Zeste délicieux.............
+        if ( author.id === Config.nesta_id 
+          && Math.random() < Config.proba_nesta )
+        {
+          sendMessage("Nesta", channel, "", 
+            message_attach = ["./files/nesta.gif"], author) ;
+          return ;
+        }
+        
+        // Pee hehe 
+        if ( Math.random() < Config.proba_pee )
+        {
+          sendMessage("Pee", channel, 
+            `*pees in ur ass* <@${author.id}>`, author) ;
+          return ;
+        }
+
+        // BTR MENTIONED????!!!??!?!?!!,,,,,,
+        if ( wouldAnswer(message_text, 
+               [ "btr", "bocchi", "ryo", "kita", 
+                 "nijika", "seika", "pa", "kikuri" ], 
+               proba = Config.proba_btr)
+            )
+        {
+          let files = []
+          fs.readdirSync("./files/btr/")
+            .forEach(file =>
+              {
+                files.push("./files/btr/" + file) ;
               }
             ) ;
-          }
-        ) ;
 
-        return ;
-      }
+          sendMessage("BTR Mentioned", channel, 
+            "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:", 
+            message_attach = files, author) ;
 
-      // Need to mimir
-      {
-        let date = message.createdAt ;
-        if ( Math.random() < Config.proba_mimir 
-             && date.getHours() >= 2 && date.getHours() <= 5 )
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/es_hora_de_dormir.mp4"] 
-            }
-          ) ;
           return ;
         }
-      }
 
-      // Quoifeur, coubeh ; Commentdancousteau etc
-      {
-        let [ text, channel ] = [ message.content, message.channel ] ;
+        // Need to mimir
+        {
+          let hour = getTime(message.createdAt.split(':')[0]) ;
 
-        if ( wouldAnswer(text, [ "goyave" ]) )
-        {
-          channel.send("Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "quelconque" ]) )
-        {
-          channel.send("Évêque.") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, 
-                    [ "quoi", "kwa", "coua", "koa", "qoua", "koua", "qwa" ])
-                )
-        {
-          if ( Math.random() < 0.5 ) 
+          if ( Math.random() < Config.proba_mimir 
+               && hour >= 2 && hour < 5 )
           {
-            channel.send("-coubeh.") ;
+            sendMessage("Mimir", channel, "", 
+              message_attach = ["./files/es_hora_de_dormir.mp4"], author) ;
+            return ;
+          }
+        }
+
+        // Quoifeur, coubeh ; Commentdancousteau etc
+        {
+          if ( wouldAnswer(message_text, [ "goyave" ]) )
+          {
+            sendMessage("Goyave", channel, 
+              "Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "quelconque" ]) )
+          {
+            sendMessage("Évêque quelconque", channel, "Évêque.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, 
+                      [ "quoi", "kwa", "coua", "koa", "qoua", "koua", "qwa" ])
+                  )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              sendMessage("Quoicoubeh", channel, "-coubeh.", author) ;
+            }
+            else
+            {
+              sendMessage("Quoi-feur", channel, "Feur.", author) ;
+            }
+            return ;
+          }
+          else if ( wouldAnswer(message_text, 
+                      [ "pourquoi", "pourkwa", "pourcoua", "pourkoa", 
+                        "pourqoua", "pourkoua", "pourqwa", "pk", "pq" ]) 
+                  )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              sendMessage("Pourquoicoubeh", channel, "Pourcoubeh.", author) ;
+            }
+            else
+            {
+              sendMessage("Pourquoi-feur", channel, "Pourfeur.", author) ;
+            }
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "mais", "mai", "mes", "mé", "meh" ]) )
+          {
+            sendMessage("Mais-Juins", channel, "Juins.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "qui", "ki" ]) )
+          {
+            sendMessage("Kirikou", channel, 
+              "-rikou. <:sea_karaba:945801970386604042>", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "comment", "koman" ]) )
+          {
+            sendMessage("Commandant Cousteau", channel, "-dant Cousteau.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, 
+                      [ "oui", "wii", "ui", "wee", 
+                        "we", "woui", "vi", "vee" ]) 
+                  )
+          {
+            sendMessage("Oustiti", channel, "-stiti.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "non" ]) )
+          {
+            sendMessage("Nombril", channel, "-bril.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "hein", "uh", "huh" ]) )
+          {
+            sendMessage("Un-deux", channel, "Deux.", author) ;
+            is_deux_sent = true ;
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "merci", "merchi", "merki" ]) )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              sendMessage("Mercigarette", channel, "-garette.", author) ;
+            }
+            else
+            {
+              sendMessage("Merci-De rien", channel, "De rien.", author) ;
+            }
+            return ;
+          }
+          else if ( wouldAnswer(message_text, [ "ah" ]) )
+          {
+            sendMessage("A-B", channel, ":b:", author) ;
+            return ;
+          }
+        }
+
+        // H
+        if ( wouldAnswer(message_text, [ "h" ], proba = Config.proba_h) )
+        {
+          let proba = Math.random() ;
+          if ( proba < 0.25 )
+          {
+            sendMessage("H1", channel, "", 
+              message_attach = ["./files/h/h1.gif"], author) ;
+          }
+          else if ( proba < 0.5 )
+          {
+            sendMessage("H2", channel, "", 
+              message_attach = ["./files/h/h2.gif"], author) ;
+          }
+          else if ( proba < 0.75 )
+          {
+            sendMessage("H3", channel, "", 
+              message_attach = ["./files/h/h3.gif"], author) ;
           }
           else
           {
-            channel.send("Feur.") ;
+            sendMessage("H4", channel, "", 
+              message_attach = ["./files/h/h4.gif"], author) ;
           }
           return ;
         }
-        else if ( wouldAnswer(text, 
-                    [ "pourquoi", "pourkwa", "pourcoua", "pourkoa", 
-                      "pourqoua", "pourkoua", "pourqwa", "pk", "pq" ]) 
-                )
-        {
-          if ( Math.random() < 0.5 ) 
-          {
-            channel.send("Pourcoubeh.") ;
-          }
-          else
-          {
-            channel.send("Pourfeur.") ;
-          }
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "mais", "mai", "mes", "mé", "meh" ]) )
-        {
-          channel.send("Juins.") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "qui", "ki" ]) )
-        {
-          channel.send("-rikou. <:sea_karaba:945801970386604042>") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "comment", "koman" ]) )
-        {
-          channel.send("-dant Cousteau.") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, 
-                    [ "oui", "wii", "ui", "wee", 
-                      "we", "woui", "vi", "vee" ]) 
-                )
-        {
-          channel.send("-stiti.") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "non" ]) )
-        {
-          channel.send("-bril.") ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "hein", "uh", "huh" ]) )
-        {
-          channel.send("Deux.") ;
-          is_deux_sent = true ;
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "merci", "merchi", "merki" ]) )
-        {
-          if ( Math.random() < 0.5 ) 
-          {
-            channel.send("-garette.") ;
-          }
-          else
-          {
-            channel.send("De rien.") ;
-          }
-          return ;
-        }
-        else if ( wouldAnswer(text, [ "ah", "a" ]) )
-        {
-          channel.send(":b:") ;
-          return ;
-        }
-      }
 
-      // H
-      if ( wouldAnswer(message.content, [ "h" ], proba = Config.proba_h) )
-      {
-        let proba = Math.random() ;
-        if ( proba < 0.25 )
+        // Contexte?
+        if ( wouldAnswer(message_text, [ "contexte" ], 
+               proba = Config.proba_contexte)
+           )
         {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/h/h1.gif"] 
-            }
-          ) ;
+          sendMessage("Contexte", channel, "", 
+            message_attach = ["./files/contexte.jpg"], author) ;
+          return ;
         }
-        else if ( proba < 0.5 )
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/h/h2.gif"] 
-            }
-          ) ;
-        }
-        else if ( proba < 0.75 )
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/h/h3.gif"] 
-            }
-          ) ;
-        }
-        else
-        {
-          message.channel.send(
-            { 
-              content : "",
-              files : ["./files/h/h4.gif"] 
-            }
-          ) ;
-        }
-        return ;
-      }
 
-      // Contexte?
-      if ( wouldAnswer(message.content, [ "contexte" ], 
-             proba = Config.proba_contexte)
-         )
-      {
-        message.channel.send(
-          { 
-            content : "",
-            files : ["./files/contexte.jpg"] 
-          }
-        ) ;
-        return ;
-      }
-
-      // Source?
-      if ( wouldAnswer(message.content, [ "source" ],
-             proba = Config.proba_source)
-         )
-      {
-        message.channel.send(
-          { 
-            content : "",
-            files : ["./files/source.png"] 
-          }
-        ) ;
-        return ;
+        // Source?
+        if ( wouldAnswer(message_text, [ "source" ],
+               proba = Config.proba_source)
+           )
+        {
+          sendMessage("Source", channel, "", 
+            message_attach = ["./files/source.png"], author) ;
+          return ;
+        }
       }
     }
   }
