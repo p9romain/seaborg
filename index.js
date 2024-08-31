@@ -14,7 +14,7 @@ const client = new Client(
   }
 ) ;
 
-const DEBUG_MODE = false ;
+const DEBUG_MODE = true ;
 
 /*
     ============================================================================
@@ -30,7 +30,7 @@ function getDate(date)
   return date.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" }) ;
 }
 
-function debugInfo(channel, author, tag, error = false, verbose = false)
+function debugInfo(channel, author, tag, error, verbose = false)
 {
   console.log(`[${error ? "ERROR" : "DEBUG"}] ${tag}`) ;
 
@@ -38,6 +38,8 @@ function debugInfo(channel, author, tag, error = false, verbose = false)
   {
     let now = new Date(Date.now()) ;
 
+    console.log() ;
+    console.log() ;
     console.log("------------------------------------\n"
         + "             DEBUG INFO \n------------------------------------") ;
 
@@ -47,6 +49,8 @@ function debugInfo(channel, author, tag, error = false, verbose = false)
 
     console.log("------------------------------------\n"
         + "             DEBUG INFO \n------------------------------------") ;
+    console.log() ;
+    console.log() ;
   }
 }
 
@@ -81,22 +85,22 @@ function wouldAnswer(message, words, proba = Config.proba_answer)
   return res && Math.random() < proba ;
 }
 
-function sendMessage(tag, channel, message_text, message_attach = [], debug = true, author = null)
+function sendMessage(tag, channel, message_text, author, message_attach = [], debug = true)
 {    
   try
   {
-    debugInfo(channel, author, tag, verbose = DEBUG_MODE && debug) ;
+    debugInfo(channel, author, tag, false, verbose = DEBUG_MODE && debug) ;
 
     channel.send(
       { 
-        content : message.content,
+        content : message_text,
         files : message_attach
       }
     ) ;
   }
   catch ( e )
   {
-    debugInfo(channel, author, tag, error = true) ;
+    debugInfo(channel, author, tag, true) ;
     console.log(e) ;
     console.log() ;
     console.log() ;
@@ -154,20 +158,26 @@ Schedule.scheduleJob(vendredi, () =>
     let proba = Math.random() ;
     if ( proba < p1 )
     {
-      sendMessage("Vendredi matin", general,
-        "_Merci la Méluche._", 
+      sendMessage("Vendredi matin", 
+        general,
+        "_Merci la Méluche._",
+        null,
         message_attach = ["./files/vendredi/gauche.mp4"]) ;
     }
     else if ( proba < p2 )
     {
-      sendMessage("Vendredi matin", general,
-        "_Merci Manu._", 
+      sendMessage("Vendredi matin",
+        general,
+        "_Merci Manu._",
+        null,
         message_attach = ["./files/vendredi/droite.mp4"]) ;
     }
     else
     {
-      sendMessage("Vendredi matin", general,
-        "_Merci Manu²._", 
+      sendMessage("Vendredi matin",
+        general,
+        "_Merci Manu²._",
+        null,
         message_attach = ["./files/vendredi/image.png"]) ;
     }
   }
@@ -176,11 +186,13 @@ Schedule.scheduleJob(vendredi, () =>
 // It's Friday night !
 Schedule.scheduleJob(friday_night, () =>
   {
-    sendMessage("Vendredi soir", general, 
+    sendMessage("Vendredi soir",
+      general, 
       "# <a:sea_fridaynight1:945779538519015424>"
         + "<a:sea_fridaynight2:945779540129611786> Time to dance !! "
         + "<a:sea_fridaynight1:945779538519015424>"
         + "<a:sea_fridaynight2:945779540129611786>",
+      null,
       message_attach = ["./files/friday_night.mp4"]) ;
   }
 ) ;
@@ -190,8 +202,10 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
   {
     if ( Math.random() < Config.proba_burger )
     {
-      sendMessage("7 Décembre", cacapublier,
+      sendMessage("7 Décembre", 
+        cacapublier,
         "# :hamburger: EH OUI :hamburger:",
+        null,
         message_attach = ["./files/eh_oui.mp4"]) ;
     }
   }
@@ -277,7 +291,7 @@ client.on("messageCreate", message =>
         const text = msg.slice(start, msg.length).join(' ') ; // text to send
         const attachments = message.attachments ;
 
-          // text, with or without attachements
+        // text, with or without attachements
         if ( text )
         {
           // with attachement
@@ -289,15 +303,22 @@ client.on("messageCreate", message =>
                 files.push(file) ;
               }
             ) ;
-            sendMessage("Talking bot (file.s, text)", channel, text, 
+            sendMessage("Talking bot (file.s, text)", 
+              channel, 
+              text, 
+              null,
               message_attach = files,
               debug = false) ;
           }
           // without attachement
           else
           {
-            sendMessage("Talking bot (text)", channel, text,
-                        debug = false) ;
+            sendMessage("Talking bot (text)", 
+              channel,
+              text, 
+              null,
+              message_attach = [],
+              debug = false) ;
           }
         }
         // just attachements
@@ -309,9 +330,12 @@ client.on("messageCreate", message =>
               files.push(file) ;
             }
           ) ;
-          sendMessage("Talking bot (file.s)", channel, "", 
-              message_attach = files,
-              debug = false) ;
+          sendMessage("Talking bot (file.s)", 
+            channel, 
+            "", 
+            null, 
+            message_attach = files,
+            debug = false) ;
         }
       }
     }
@@ -342,16 +366,17 @@ client.on("messageCreate", message =>
           {
             let new_nickname = nickname.slice(0, 32) ; 
 
-            debugInfo(channel, author, 
-              `Nicknaming to ${new_nickname}`, 
+            debugInfo(channel, 
+              author, 
+              `Nicknaming to ${new_nickname}`,
+              false,
               verbose = DEBUG_MODE) ;
 
             message.member.setNickname(new_nickname) ;
           }
           catch ( e ) 
           { 
-            debugInfo(channel, author, "Nicknaming", 
-              error = true) ;
+            debugInfo(channel, author, "Nicknaming", true) ;
             console.log(e) ;
             console.log() ;
             console.log() ;
@@ -368,19 +393,25 @@ client.on("messageCreate", message =>
 
         if ( proba < 0.2 )
         {
-          sendMessage("Ping (pakontan)", channel,
-            "<:sea_pakontan:945802134803345459>", author) ;
+          sendMessage("Ping (pakontan)", 
+            channel,
+            "<:sea_pakontan:945802134803345459>", 
+            author) ;
         }
         else if ( proba < 0.4 )
         {
-          sendMessage("Ping (poli)", channel,
+          sendMessage("Ping (poli)", 
+            channel,
             "Je vous prie de bien vouloir arrêter de me \"ping\", "
-            + "comme disent les jeunes. :heart::call_me:", author) ;
+            + "comme disent les jeunes. :heart::call_me:", 
+            author) ;
         }
         else if ( proba < 0.6 )
         {
-          sendMessage("Ping (question)", channel, 
-            "Qu'est-ce qui y a là, d'où tu me ping ?", author) ;
+          sendMessage("Ping (question)", 
+            channel, 
+            "Qu'est-ce qui y a là, d'où tu me ping ?", 
+            author) ;
         }
         else if ( proba < 0.8 )
         {
@@ -405,8 +436,11 @@ client.on("messageCreate", message =>
         // Bref.
         if ( wouldAnswer(message_text, [ "bref" ], proba = Config.proba_bref) )
         {
-          sendMessage("Bref", channel, "Bref.", 
-            message_attach = ["./files/bref.gif"] , author) ;
+          sendMessage("Bref", 
+            channel, 
+            "Bref.", 
+            author, 
+            message_attach = ["./files/bref.gif"]) ;
           return ;
         }
 
@@ -425,7 +459,12 @@ client.on("messageCreate", message =>
         {
           try
           {
-            console.log("[DEBUG] Curse of Ra") ;
+            debugInfo(channel, 
+              author, 
+              "Curse of Ra", 
+              false,
+              verbose = DEBUG_MODE) ;
+
             for ( let i = 0 ; i < Math.floor( 100 * Math.random() ) ; i++ )
             {
               channel.send("CURSE OF RA 𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩 𓀪 𓀫 𓀬 𓀭 𓀲 𓀳 𓀴 𓀵 𓀶 𓀷 𓀸 𓀹 𓀺 𓀻 𓀼 𓀽 𓀾 𓀿 𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁍 𓁎 𓁏 𓁐 𓁑") ;
@@ -437,7 +476,7 @@ client.on("messageCreate", message =>
           }
           catch ( e )
           {
-            console.log("[ERROR] Curse of Ra :") ;
+            debugInfo(channel, author, "Curse of Ra", true) ;
             console.log(e) ;
             console.log() ;
           }
@@ -448,16 +487,21 @@ client.on("messageCreate", message =>
         if ( author.id === Config.nesta_id 
           && Math.random() < Config.proba_nesta )
         {
-          sendMessage("Nesta", channel, "", 
-            message_attach = ["./files/nesta.gif"], author) ;
+          sendMessage("Nesta", 
+            channel, 
+            "", 
+            author, 
+            message_attach = ["./files/nesta.gif"]) ;
           return ;
         }
         
         // Pee hehe 
         if ( Math.random() < Config.proba_pee )
         {
-          sendMessage("Pee", channel, 
-            `*pees in ur ass* <@${author.id}>`, author) ;
+          sendMessage("Pee", 
+            channel, 
+            `*pees in ur ass* <@${author.id}>`,
+            author) ;
           return ;
         }
 
@@ -476,22 +520,27 @@ client.on("messageCreate", message =>
               }
             ) ;
 
-          sendMessage("BTR Mentioned", channel, 
-            "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:", 
-            message_attach = files, author) ;
+          sendMessage("BTR Mentioned", 
+            channel, 
+            "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:",
+            author,
+            message_attach = files) ;
 
           return ;
         }
 
         // Need to mimir
         {
-          let hour = getTime(message.createdAt.split(':')[0]) ;
+          let hour = getTime(message.createdAt).split(':')[0] ;
 
           if ( Math.random() < Config.proba_mimir 
                && hour >= 2 && hour < 5 )
           {
-            sendMessage("Mimir", channel, "", 
-              message_attach = ["./files/es_hora_de_dormir.mp4"], author) ;
+            sendMessage("Mimir", 
+              channel, 
+              "", 
+              author,
+              message_attach = ["./files/es_hora_de_dormir.mp4"]) ;
             return ;
           }
         }
@@ -500,8 +549,10 @@ client.on("messageCreate", message =>
         {
           if ( wouldAnswer(message_text, [ "goyave" ]) )
           {
-            sendMessage("Goyave", channel, 
-              "Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......", author) ;
+            sendMessage("Goyave", 
+              channel, 
+              "Randomisa-*hmmmmmmmmlmmmlmlmmmmlmlmlllllmllm*.......",
+              author) ;
             return ;
           }
           else if ( wouldAnswer(message_text, [ "quelconque" ]) )
@@ -545,13 +596,18 @@ client.on("messageCreate", message =>
           }
           else if ( wouldAnswer(message_text, [ "qui", "ki" ]) )
           {
-            sendMessage("Kirikou", channel, 
-              "-rikou. <:sea_karaba:945801970386604042>", author) ;
+            sendMessage("Kirikou", 
+              channel, 
+              "-rikou. <:sea_karaba:945801970386604042>",
+              author) ;
             return ;
           }
           else if ( wouldAnswer(message_text, [ "comment", "koman" ]) )
           {
-            sendMessage("Commandant Cousteau", channel, "-dant Cousteau.", author) ;
+            sendMessage("Commandant Cousteau",
+              channel, 
+              "-dant Cousteau.",
+              author) ;
             return ;
           }
           else if ( wouldAnswer(message_text, 
@@ -598,23 +654,35 @@ client.on("messageCreate", message =>
           let proba = Math.random() ;
           if ( proba < 0.25 )
           {
-            sendMessage("H1", channel, "", 
-              message_attach = ["./files/h/h1.gif"], author) ;
+            sendMessage("H1",
+              channel, 
+              "",
+              author,
+              message_attach = ["./files/h/h1.gif"]) ;
           }
           else if ( proba < 0.5 )
           {
-            sendMessage("H2", channel, "", 
-              message_attach = ["./files/h/h2.gif"], author) ;
+            sendMessage("H2",
+              channel, 
+              "",
+              author,
+              message_attach = ["./files/h/h2.gif"]) ;
           }
           else if ( proba < 0.75 )
           {
-            sendMessage("H3", channel, "", 
-              message_attach = ["./files/h/h3.gif"], author) ;
+            sendMessage("H3",
+              channel, 
+              "",
+              author,
+              message_attach = ["./files/h/h3.gif"]) ;
           }
           else
           {
-            sendMessage("H4", channel, "", 
-              message_attach = ["./files/h/h4.gif"], author) ;
+            sendMessage("H4",
+              channel, 
+              "",
+              author,
+              message_attach = ["./files/h/h4.gif"]) ;
           }
           return ;
         }
@@ -624,8 +692,11 @@ client.on("messageCreate", message =>
                proba = Config.proba_contexte)
            )
         {
-          sendMessage("Contexte", channel, "", 
-            message_attach = ["./files/contexte.jpg"], author) ;
+          sendMessage("Contexte",
+            channel, 
+            "",
+            author,
+            message_attach = ["./files/contexte.jpg"]) ;
           return ;
         }
 
@@ -634,8 +705,11 @@ client.on("messageCreate", message =>
                proba = Config.proba_source)
            )
         {
-          sendMessage("Source", channel, "", 
-            message_attach = ["./files/source.png"], author) ;
+          sendMessage("Source",
+            channel, 
+            "",
+            author,
+            message_attach = ["./files/source.png"]) ;
           return ;
         }
       }
