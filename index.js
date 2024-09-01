@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits } = require("discord.js") ;
 const Config = require("./config.json") ;
 const Schedule = require("node-schedule") ;
-const fs = require("fs");
+const fs = require("fs") ;
 
 const client = new Client(
   {
@@ -36,10 +36,8 @@ function debugInfo(channel, author, tag, error, verbose = false)
 
   if ( verbose || error )
   {
-    let now = new Date(Date.now()) ;
-
-    console.log() ;
-    console.log() ;
+    const now = new Date(Date.now()) ;
+      
     console.log("------------------------------------\n"
         + "             DEBUG INFO \n------------------------------------") ;
 
@@ -54,11 +52,10 @@ function debugInfo(channel, author, tag, error, verbose = false)
   }
 }
 
-const fillers = 
-  "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
-
 function regexifyWord(text)
 {
+  const fillers = 
+    "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
   let word = "" ;
 
   for ( const char of text )
@@ -66,14 +63,13 @@ function regexifyWord(text)
     word += char + '+' + fillers ;
   }
 
-  return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", 
-              "ui") ;
+  return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", "ui") ;
 }
 
 function wouldAnswer(message, words, proba = Config.proba_answer)
 {
   let res = false ;
-  for (const word of words)
+  for ( const word of words )
   {
     if ( regexifyWord(word).test(message) )
     {
@@ -85,7 +81,8 @@ function wouldAnswer(message, words, proba = Config.proba_answer)
   return res && Math.random() < proba ;
 }
 
-function sendMessage(tag, channel, message_text, author, message_attach = [], debug = true)
+function sendMessage(tag, channel, message_text, author, 
+  message_attach = [], debug = true)
 {    
   try
   {
@@ -152,10 +149,10 @@ client.login(Config.token) ;
 // Nous sommes vendredi
 Schedule.scheduleJob(vendredi, () =>
   {
-    let p1 = Math.random() ;
-    let p2 = (p1 + 1)/2 ;
+    const p1 = Math.random() ;
+    const p2 = (p1 + 1)/2 ;
 
-    let proba = Math.random() ;
+    const proba = Math.random() ;
     if ( proba < p1 )
     {
       sendMessage("Vendredi matin", 
@@ -214,35 +211,33 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
 // Birthdays
 client.on("ready", () =>
   {
-    Config.birthdays.forEach(birthday =>
-      {
-        Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
+    for ( const birthday of Config.birthdays )
+    {
+      Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
+        {
+          let users = "" ;
+          let first_names = "" ;
+          for ( const user of birthday.users )
           {
-            let users = "" ;
-            let first_names = "" ;
-            birthday.users.forEach(user =>
-              {
-                users += "<@" + user.id + "> " ;
-                first_names += user.comment + " " ;
-              }
-            ) ;
-
-            console.log(`Anniv(s) de : ${first_names}(${birthday.date})`);
-
-            general.send(":index_pointing_at_the_viewer:"
-              + ":index_pointing_at_the_viewer:"
-              + ":index_pointing_at_the_viewer:") ;
-            general.send(users) ; 
-            general.send("** **") ;
-            general.send(":palm_up_hand::birthday:") ; 
-            general.send("** **") ;
-            general.send("** **") ;
-            general.send(
-              `:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
+            users += "<@" + user.id + "> " ;
+            first_names += user.comment + " " ;
           }
-        ) ;
-      }
-    ) ;
+
+          console.log(`Anniv(s) de : ${first_names}(${birthday.date})`) ;
+
+          general.send(":index_pointing_at_the_viewer:"
+                       + ":index_pointing_at_the_viewer:"
+                       + ":index_pointing_at_the_viewer:") ;
+          general.send(users) ; 
+          general.send("** **") ;
+          general.send(":palm_up_hand::birthday:") ; 
+          general.send("** **") ;
+          general.send("** **") ;
+          general.send(
+              `:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
+        }
+      ) ;
+    }
   }
 ) ;
 
@@ -274,7 +269,7 @@ client.on("messageCreate", message =>
 
         if ( msg[0].slice(0, 2) === "<#" && msg[0].slice(-1) === '>' )
         {
-          let channel_id = msg[0].slice(2, -1) ; // channel id : <#channel_id>
+          const channel_id = msg[0].slice(2, -1) ; // channel id : <#channel_id>
           channel = client.channels.cache.get(channel_id) ; // get channel
 
           old_channel = channel ; // set to the new channel used
@@ -298,11 +293,11 @@ client.on("messageCreate", message =>
           if ( attachments.size )
           {
             let files = []
-            attachments.forEach(file =>
-              {
-                files.push(file) ;
-              }
-            ) ;
+            for ( const file of attachments )
+            {
+              files.push(file) ;
+            }
+
             sendMessage("Talking bot (file.s, text)", 
               channel, 
               text, 
@@ -325,11 +320,11 @@ client.on("messageCreate", message =>
         else if ( attachments.size )
         {
           let files = []
-          attachments.forEach(file =>
-            {
-              files.push(file) ;
-            }
-          ) ;
+          for ( const file of attachments )
+          {
+            files.push(file) ;
+          }
+
           sendMessage("Talking bot (file.s)", 
             channel, 
             "", 
@@ -343,32 +338,57 @@ client.on("messageCreate", message =>
     {
 
       // Je suis....
+      if ( author.id !== Config.owner_id )
       {
-        let nickname = message_text ;
-        let do_rename = false ;
+        const checks = [ 
+          [ "je suis", [] ], 
+          [ "js", [] ] , 
+          [ "jss", [] ], 
+          [ "suis", ["tu", "jy", "jen", "me", "jte", "jme" ] ], 
+          [ "chui", [ "me" ] ], 
+          [ "jsuis", [] ] 
+        ] ;
 
-        [ "je suis", "js", "suis", "chui", "jsuis" ]
-          .forEach(word =>
+        for ( const [test, exceptions] of checks )
+        {
+          let skip = false ;
+          for ( const except of exceptions )
+          {
+            if ( !skip )
             {
-              let re = regexifyWord(word) ;
+              const re = regexifyWord(except + " " + test) ;
               if ( re.test(nickname) )
               {
-                do_rename = true ;
-                let split = nickname.split(re) ;
-                nickname = split[split.findLastIndex(f => f)].trim() ;
+                skip = true ;  
               }
             }
-          )
+          }
+         
+          if ( skip ) { return ; }
+
+          let nickname = message_text ;
+          let do_rename = false ;
+
+          const re = regexifyWord(test) ;
+          if ( re.test(nickname) )
+          {
+            do_rename = true ;
+            const split = nickname.split(re) ;
+            nickname = split[split.findLastIndex(f => f)].trim() ;
+          }
+        }
 
         if ( do_rename )
         {
           try
           {
-            let new_nickname = nickname.slice(0, 32) ; 
+            const new_nickname = nickname.slice(0, 32) ; 
+            const tag = `Nicknaming from \"${author.displayName}\"` 
+              + `to \"${new_nickname}\"` ;
 
             debugInfo(channel, 
               author, 
-              `Nicknaming to ${new_nickname}`,
+              tag,
               false,
               verbose = DEBUG_MODE) ;
 
@@ -389,7 +409,7 @@ client.on("messageCreate", message =>
       // Answer to ping
       if ( (new RegExp(`<@${Config.bot_id}>`, "ui")).test(message_text) )
       {
-        let proba = Math.random() ;
+        const proba = Math.random() ;
 
         if ( proba < 0.2 )
         {
@@ -421,11 +441,12 @@ client.on("messageCreate", message =>
         {
           message.guild.members.fetch().then(members => 
             {
-              let ping = "Tu veux me ping ? Bah tiens cheh à " 
+              const ping = "Tu veux me ping ? Bah tiens cheh à " 
                 + members.random().user.toString() ;
+
               sendMessage("Ping (random)", channel, ping, author) ;
             }
-          );
+          ) ;
         }
 
         return ;
@@ -446,7 +467,7 @@ client.on("messageCreate", message =>
 
         // Un, deux, trois, soleil !
         if ( is_deux_sent && 
-             wouldAnswer(message_text, [ "trois" ], proba = 2))
+             wouldAnswer(message_text, [ "trois" ], proba = 2) )
         {
           sendMessage("Trois-Soleil", channel, "Soleil ! <3", author) ;
           is_deux_sent = false ;
@@ -510,15 +531,13 @@ client.on("messageCreate", message =>
                [ "btr", "bocchi", "ryo", "kita", 
                  "nijika", "seika", "pa", "kikuri" ], 
                proba = Config.proba_btr)
-            )
+           )
         {
           let files = []
-          fs.readdirSync("./files/btr/")
-            .forEach(file =>
-              {
-                files.push("./files/btr/" + file) ;
-              }
-            ) ;
+          for ( const file of fs.readdirSync("./files/btr/") )
+          {
+            files.push("./files/btr/" + file) ;
+          }
 
           sendMessage("BTR Mentioned", 
             channel, 
@@ -531,7 +550,7 @@ client.on("messageCreate", message =>
 
         // Need to mimir
         {
-          let hour = getTime(message.createdAt).split(':')[0] ;
+          const hour = getTime(message.createdAt).split(':')[0] ;
 
           if ( Math.random() < Config.proba_mimir 
                && hour >= 2 && hour < 5 )
@@ -589,7 +608,9 @@ client.on("messageCreate", message =>
             }
             return ;
           }
-          else if ( wouldAnswer(message_text, [ "mais", "mai", "mes", "mé", "meh" ]) )
+          else if ( wouldAnswer(message_text, 
+                      [ "mais", "mai", "mes", "mé", "meh" ]) 
+                  )
           {
             sendMessage("Mais-Juins", channel, "Juins.", author) ;
             return ;
@@ -651,7 +672,7 @@ client.on("messageCreate", message =>
         // H
         if ( wouldAnswer(message_text, [ "h" ], proba = Config.proba_h) )
         {
-          let proba = Math.random() ;
+          const proba = Math.random() ;
           if ( proba < 0.25 )
           {
             sendMessage("H1",
