@@ -52,7 +52,7 @@ function debugInfo(channel, author, tag, error, verbose = false)
   }
 }
 
-function regexifyWord(text)
+function regexifyWord(text, anywhere)
 {
   const fillers = 
     "(-|_|,|;|\\.|\\?|!|#|\\||=|\\+|°|%|\\$|£|\\*|'|\"|§|<|>|\\^)*" ;
@@ -63,15 +63,16 @@ function regexifyWord(text)
     word += char + '+' + fillers ;
   }
 
-  return new RegExp("(^|\\s)" + word + "($|\\s\\??|\\?)", "ui") ;
+  return new RegExp(`(^|\\s)${word}($|\\s${anywhere ? "" : "?\\?"})`, "ui") ;
 }
 
-function wouldAnswer(message, words, proba = Config.proba_answer)
+function wouldAnswer(message, words, 
+  proba = Config.proba_answer, anywhere = false)
 {
   let res = false ;
   for ( const word of words )
   {
-    if ( regexifyWord(word).test(message) )
+    if ( regexifyWord(word, anywhere).test(message) )
     {
       res = true ;
       break ;
@@ -205,6 +206,17 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
         null,
         message_attach = ["./files/eh_oui.mp4"]) ;
     }
+  }
+) ;
+
+// The 21st night of September.........
+Schedule.scheduleJob("0 8 22 9 *", () =>
+  {
+    sendMessage("21st night of September",
+      general,
+      "You remember, do you ? <a:sea_dog:945779538879737856>",
+      null,
+      message_attach = ["./files/september_21.mp4"]) ;
   }
 ) ;
 
@@ -357,7 +369,7 @@ client.on("messageCreate", message =>
           {
             if ( !skip )
             {
-              const re = regexifyWord(except + " " + test) ;
+              const re = regexifyWord(except + " " + test, true) ;
               if ( re.test(message_text) )
               {
                 skip = true ;  
@@ -367,7 +379,7 @@ client.on("messageCreate", message =>
          
           if ( skip ) { return ; }
 
-          const re = regexifyWord(test) ;
+          const re = regexifyWord(test, true) ;
           if ( re.test(nickname) )
           {
             do_rename = true ;
@@ -453,7 +465,11 @@ client.on("messageCreate", message =>
       if ( channel !== pissoir )
       {
         // Bref.
-        if ( wouldAnswer(message_text, [ "bref" ], proba = Config.proba_bref) )
+        if ( wouldAnswer(message_text, 
+               [ "bref" ], 
+               proba = Config.proba_bref, 
+               anywhere = true)
+           )
         {
           sendMessage("Bref", 
             channel, 
@@ -464,8 +480,13 @@ client.on("messageCreate", message =>
         }
 
         // Un, deux, trois, soleil !
-        if ( is_deux_sent && 
-             wouldAnswer(message_text, [ "trois" ], proba = 2) )
+        if ( is_deux_sent
+             && wouldAnswer(
+                  message_text, 
+                  [ "trois" ], 
+                  proba = 2, 
+                  anywhere = true) 
+           )
         {
           sendMessage("Trois-Soleil", channel, "Soleil ! <3", author) ;
           is_deux_sent = false ;
@@ -528,7 +549,8 @@ client.on("messageCreate", message =>
         if ( wouldAnswer(message_text, 
                [ "btr", "bocchi", "ryo", "kita", 
                  "nijika", "seika", "pa", "kikuri" ], 
-               proba = Config.proba_btr)
+               proba = Config.proba_btr,
+               anywhere = true)
            )
         {
           let files = []
@@ -564,7 +586,12 @@ client.on("messageCreate", message =>
 
         // Quoifeur, coubeh ; Commentdancousteau etc
         {
-          if ( wouldAnswer(message_text, [ "goyave" ]) )
+          if ( wouldAnswer(
+                 message_text, 
+                 [ "goyave" ], 
+                 proba = Config.proba_answer, 
+                 anywhere = true) 
+             )
           {
             sendMessage("Goyave", 
               channel, 
@@ -572,7 +599,12 @@ client.on("messageCreate", message =>
               author) ;
             return ;
           }
-          else if ( wouldAnswer(message_text, [ "quelconque" ]) )
+          else if ( wouldAnswer(
+                 message_text, 
+                 [ "quelconque" ], 
+                 proba = Config.proba_answer, 
+                 anywhere = true) 
+             )
           {
             sendMessage("Évêque quelconque", channel, "Évêque.", author) ;
             return ;
@@ -648,7 +680,23 @@ client.on("messageCreate", message =>
             is_deux_sent = true ;
             return ;
           }
-          else if ( wouldAnswer(message_text, [ "merci", "merchi", "merki" ]) )
+          else if ( wouldAnswer(
+                 message_text, 
+                 [ "merki", "thx", "thanks", 
+                   "thank you", "ty", "cimer", "merchi" ], 
+                 proba = Config.proba_answer, 
+                 anywhere = true) 
+             )
+          {
+            sendMessage("Merci-De rien+", channel, "De rien.", author) ;
+            return ;
+          }
+          else if ( wouldAnswer(
+                 message_text, 
+                 [ "merci" ], 
+                 proba = Config.proba_answer, 
+                 anywhere = true) 
+             )
           {
             if ( Math.random() < 0.5 ) 
             {
@@ -668,7 +716,12 @@ client.on("messageCreate", message =>
         }
 
         // H
-        if ( wouldAnswer(message_text, [ "h" ], proba = Config.proba_h) )
+        if ( wouldAnswer(
+               message_text, 
+               [ "h" ],
+               proba = Config.proba_h, 
+               anywhere = true) 
+           )
         {
           const proba = Math.random() ;
           if ( proba < 0.25 )
