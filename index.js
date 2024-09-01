@@ -252,8 +252,6 @@ client.on("messageCreate", message =>
     {
       if ( message_text === "@stop" )
       {
-        console.log() ;
-        console.log() ;
         console.log("====================================\n                Stop \n====================================") ;
         console.log() ;
         console.log() ;
@@ -340,6 +338,9 @@ client.on("messageCreate", message =>
       // Je suis....
       if ( author.id !== Config.owner_id )
       {
+        let nickname = message_text ;
+        let do_rename = false ;
+
         const checks = [ 
           [ "je suis", [] ], 
           [ "js", [] ] , 
@@ -357,7 +358,7 @@ client.on("messageCreate", message =>
             if ( !skip )
             {
               const re = regexifyWord(except + " " + test) ;
-              if ( re.test(nickname) )
+              if ( re.test(message_text) )
               {
                 skip = true ;  
               }
@@ -365,9 +366,6 @@ client.on("messageCreate", message =>
           }
          
           if ( skip ) { return ; }
-
-          let nickname = message_text ;
-          let do_rename = false ;
 
           const re = regexifyWord(test) ;
           if ( re.test(nickname) )
@@ -383,7 +381,7 @@ client.on("messageCreate", message =>
           try
           {
             const new_nickname = nickname.slice(0, 32) ; 
-            const tag = `Nicknaming from \"${author.displayName}\"` 
+            const tag = `Nicknaming from \"${message.member.displayName}\" ` 
               + `to \"${new_nickname}\"` ;
 
             debugInfo(channel, 
