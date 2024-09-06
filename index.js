@@ -160,7 +160,7 @@ Schedule.scheduleJob(vendredi, () =>
         general,
         "_Merci la Méluche._",
         null,
-        message_attach = ["./files/vendredi/gauche.mp4"]) ;
+        message_attach = [ "./files/vendredi/gauche.mp4" ]) ;
     }
     else if ( proba < p2 )
     {
@@ -168,7 +168,7 @@ Schedule.scheduleJob(vendredi, () =>
         general,
         "_Merci Manu._",
         null,
-        message_attach = ["./files/vendredi/droite.mp4"]) ;
+        message_attach = [ "./files/vendredi/droite.mp4" ]) ;
     }
     else
     {
@@ -176,7 +176,7 @@ Schedule.scheduleJob(vendredi, () =>
         general,
         "_Merci Manu²._",
         null,
-        message_attach = ["./files/vendredi/image.png"]) ;
+        message_attach = [ "./files/vendredi/image.png" ]) ;
     }
   }
 ) ;
@@ -191,7 +191,7 @@ Schedule.scheduleJob(friday_night, () =>
         + "<a:sea_fridaynight1:945779538519015424>"
         + "<a:sea_fridaynight2:945779540129611786>",
       null,
-      message_attach = ["./files/friday_night.mp4"]) ;
+      message_attach = [ "./files/friday_night.mp4" ]) ;
   }
 ) ;
 
@@ -204,7 +204,7 @@ Schedule.scheduleJob("0 * 7 12 *", () =>
         cacapublier,
         "# :hamburger: EH OUI :hamburger:",
         null,
-        message_attach = ["./files/eh_oui.mp4"]) ;
+        message_attach = [ "./files/eh_oui.mp4" ]) ;
     }
   }
 ) ;
@@ -216,7 +216,36 @@ Schedule.scheduleJob("0 8 22 9 *", () =>
       general,
       "You remember, do you ? <a:sea_dog:945779538879737856>",
       null,
-      message_attach = ["./files/september_21.mp4"]) ;
+      message_attach = [ "./files/september_21.mp4" ]) ;
+  }
+) ;
+
+// SPOOKY MONTH ???????
+Schedule.scheduleJob("0 0 1 10 *", () =>
+  {
+    sendMessage("SPOOKY MONTH !!!!!",
+      general,
+      "# <a:sea_spooky_dance_pumpkin:945779540372906024>"
+        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+        + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
+        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+        + " I T   I S   D A   S P O O K Y   M O N T H :bangbang::bangbang: "
+        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+        + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
+        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+        + "<a:sea_spooky_dance_pumpkin:945779540372906024>",
+      null,
+      message_attach = [ "./files/SPOOKY_MONTH.mp4" ]) ;
+  }
+) ;
+
+// Japanese words
+Schedule.scheduleJob("0 12 * * *", () =>
+  {
+    sendMessage("Japanese words",
+      client.channel.cache.get(1281685530546802758),
+      "k!r n5",
+      null) ;
   }
 ) ;
 
@@ -267,6 +296,7 @@ client.on("messageCreate", message =>
         console.log("====================================\n                Stop \n====================================") ;
         console.log() ;
         console.log() ;
+
         process.exit(0) ; 
       }
 
@@ -475,7 +505,7 @@ client.on("messageCreate", message =>
             channel, 
             "Bref.", 
             author, 
-            message_attach = ["./files/bref.gif"]) ;
+            message_attach = [ "./files/bref.gif" ]) ;
           return ;
         }
 
@@ -531,7 +561,7 @@ client.on("messageCreate", message =>
             channel, 
             "", 
             author, 
-            message_attach = ["./files/nesta.gif"]) ;
+            message_attach = [ "./files/nesta.gif" ]) ;
           return ;
         }
         
@@ -579,7 +609,7 @@ client.on("messageCreate", message =>
               channel, 
               "", 
               author,
-              message_attach = ["./files/es_hora_de_dormir.mp4"]) ;
+              message_attach = [ "./files/es_hora_de_dormir.mp4" ]) ;
             return ;
           }
         }
@@ -713,6 +743,18 @@ client.on("messageCreate", message =>
             sendMessage("A-B", channel, ":b:", author) ;
             return ;
           }
+          else if ( wouldAnswer(message_text, [ "re" ]) )
+          {
+            if ( Math.random() < 0.5 ) 
+            {
+              sendMessage("Renard", channel, "-nard.", author) ;
+            }
+            else
+            {
+              sendMessage("Requin", channel, "-quin.", author) ;
+            }
+            return ;
+          }
         }
 
         // H
@@ -730,7 +772,7 @@ client.on("messageCreate", message =>
               channel, 
               "",
               author,
-              message_attach = ["./files/h/h1.gif"]) ;
+              message_attach = [ "./files/h/h1.gif" ]) ;
           }
           else if ( proba < 0.5 )
           {
@@ -738,7 +780,7 @@ client.on("messageCreate", message =>
               channel, 
               "",
               author,
-              message_attach = ["./files/h/h2.gif"]) ;
+              message_attach = [ "./files/h/h2.gif" ]) ;
           }
           else if ( proba < 0.75 )
           {
@@ -746,7 +788,7 @@ client.on("messageCreate", message =>
               channel, 
               "",
               author,
-              message_attach = ["./files/h/h3.gif"]) ;
+              message_attach = [ "./files/h/h3.gif" ]) ;
           }
           else
           {
@@ -754,7 +796,7 @@ client.on("messageCreate", message =>
               channel, 
               "",
               author,
-              message_attach = ["./files/h/h4.gif"]) ;
+              message_attach = [ "./files/h/h4.gif" ]) ;
           }
           return ;
         }
@@ -768,7 +810,7 @@ client.on("messageCreate", message =>
             channel, 
             "",
             author,
-            message_attach = ["./files/contexte.jpg"]) ;
+            message_attach = [ "./files/contexte.jpg" ]) ;
           return ;
         }
 
@@ -781,7 +823,7 @@ client.on("messageCreate", message =>
             channel, 
             "",
             author,
-            message_attach = ["./files/source.png"]) ;
+            message_attach = [ "./files/source.png" ]) ;
           return ;
         }
       }
