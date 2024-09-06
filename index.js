@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits } = require("discord.js") ;
 const Config = require("./config.json") ;
-const Schedule = require("node-schedule") ;
+const CronJob = require('cron').CronJob ;
 const fs = require("fs") ;
 
 const client = new Client(
@@ -109,16 +109,6 @@ function sendMessage(tag, channel, message_text, author,
     ============================================================================
 */
 
-const vendredi = new Schedule.RecurrenceRule() ;
-vendredi.dayOfWeek = 5 ;
-vendredi.hour = 8 ;
-vendredi.minute = 0 ;
-
-const friday_night = new Schedule.RecurrenceRule() ;
-friday_night.dayOfWeek = 5 ;
-friday_night.hour = 20 ;
-friday_night.minute = 0 ;
-
 let general, cacapublier, pissoir, secret_channel ;
 let old_channel, is_deux_sent ;
 
@@ -148,104 +138,140 @@ client.login(Config.token) ;
 */
 
 // Nous sommes vendredi
-Schedule.scheduleJob(vendredi, () =>
+CronJob.from(
   {
-    const p1 = Math.random() ;
-    const p2 = (p1 + 1)/2 ;
+    cronTime : "0 0 8 * * 5",
+    onTick : () =>
+      {
+        const p1 = Math.random() ;
+        const p2 = (p1 + 1)/2 ;
 
-    const proba = Math.random() ;
-    if ( proba < p1 )
-    {
-      sendMessage("Vendredi matin", 
-        general,
-        "_Merci la Méluche._",
-        null,
-        message_attach = [ "./files/vendredi/gauche.mp4" ]) ;
-    }
-    else if ( proba < p2 )
-    {
-      sendMessage("Vendredi matin",
-        general,
-        "_Merci Manu._",
-        null,
-        message_attach = [ "./files/vendredi/droite.mp4" ]) ;
-    }
-    else
-    {
-      sendMessage("Vendredi matin",
-        general,
-        "_Merci Manu²._",
-        null,
-        message_attach = [ "./files/vendredi/image.png" ]) ;
-    }
+        const proba = Math.random() ;
+        if ( proba < p1 )
+        {
+          sendMessage("Vendredi matin", 
+                      general,
+                      "_Merci la Méluche._",
+                      null,
+                      message_attach = [ "./files/vendredi/gauche.mp4" ]) ;
+        }
+        else if ( proba < p2 )
+        {
+          sendMessage("Vendredi matin",
+                      general,
+                      "_Merci Manu._",
+                      null,
+                      message_attach = [ "./files/vendredi/droite.mp4" ]) ;
+        }
+        else
+        {
+          sendMessage("Vendredi matin",
+                      general,
+                      "_Merci Manu²._",
+                      null,
+                      message_attach = [ "./files/vendredi/image.png" ]) ;
+        }
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
 // It's Friday night !
-Schedule.scheduleJob(friday_night, () =>
+CronJob.from(
   {
-    sendMessage("Vendredi soir",
-      general, 
-      "# <a:sea_fridaynight1:945779538519015424>"
-        + "<a:sea_fridaynight2:945779540129611786> Time to dance !! "
-        + "<a:sea_fridaynight1:945779538519015424>"
-        + "<a:sea_fridaynight2:945779540129611786>",
-      null,
-      message_attach = [ "./files/friday_night.mp4" ]) ;
+    cronTime : "0 0 20 * * 5",
+    onTick : () =>
+      {
+        sendMessage("Vendredi soir",
+          general, 
+          "# <a:sea_fridaynight1:945779538519015424>"
+            + "<a:sea_fridaynight2:945779540129611786> Time to dance !! "
+            + "<a:sea_fridaynight1:945779538519015424>"
+            + "<a:sea_fridaynight2:945779540129611786>",
+          null,
+          message_attach = [ "./files/friday_night.mp4" ]) ;
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
 // EH OUI LE 7 DECEMBRE
-Schedule.scheduleJob("0 * 7 12 *", () =>
+CronJob.from(
   {
-    if ( Math.random() < Config.proba_burger )
-    {
-      sendMessage("7 Décembre", 
-        cacapublier,
-        "# :hamburger: EH OUI :hamburger:",
-        null,
-        message_attach = [ "./files/eh_oui.mp4" ]) ;
-    }
+    cronTime : "0 0 * 7 12 *",
+    onTick : () =>
+      {
+        if ( Math.random() < Config.proba_burger )
+        {
+          sendMessage("7 Décembre", 
+            cacapublier,
+            "# :hamburger: EH OUI :hamburger:",
+            null,
+            message_attach = [ "./files/eh_oui.mp4" ]) ;
+        }
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
 // The 21st night of September.........
-Schedule.scheduleJob("0 8 22 9 *", () =>
+CronJob.from(
   {
-    sendMessage("21st night of September",
-      general,
-      "You remember, do you ? <a:sea_dog:945779538879737856>",
-      null,
-      message_attach = [ "./files/september_21.mp4" ]) ;
+    cronTime : "0 0 8 22 9 *",
+    onTick : () =>
+      {
+        sendMessage("21st night of September",
+          general,
+          "You remember, do you ? <a:sea_dog:945779538879737856>",
+          null,
+          message_attach = [ "./files/september_21.mp4" ]) ;
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
 // SPOOKY MONTH ???????
-Schedule.scheduleJob("0 0 1 10 *", () =>
+CronJob.from(
   {
-    sendMessage("SPOOKY MONTH !!!!!",
-      general,
-      "# <a:sea_spooky_dance_pumpkin:945779540372906024>"
-        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
-        + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
-        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
-        + " I T   I S   D A   S P O O K Y   M O N T H :bangbang::bangbang: "
-        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
-        + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
-        + "<a:sea_spooky_dance_skeleton:945779540138029117>"
-        + "<a:sea_spooky_dance_pumpkin:945779540372906024>",
-      null,
-      message_attach = [ "./files/SPOOKY_MONTH.mp4" ]) ;
+    cronTime : "0 0 0 1 10 *",
+    onTick : () =>
+      {
+        sendMessage("SPOOKY MONTH !!!!!",
+          general,
+          "# <a:sea_spooky_dance_pumpkin:945779540372906024>"
+            + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+            + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
+            + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+            + " I T   I S   D A   S P O O K Y   M O N T H :bangbang::bangbang: "
+            + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+            + "<a:sea_spooky_dance_pumpkin:945779540372906024>"
+            + "<a:sea_spooky_dance_skeleton:945779540138029117>"
+            + "<a:sea_spooky_dance_pumpkin:945779540372906024>",
+          null,
+          message_attach = [ "./files/SPOOKY_MONTH.mp4" ]) ;
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
 // Japanese words
-Schedule.scheduleJob("0 12 * * *", () =>
+CronJob.from(
   {
-    sendMessage("Japanese words",
-      client.channel.cache.get(1281685530546802758),
-      "k!r n5",
-      null) ;
+    cronTime : "0 0 12 * * *",
+    onTick : () =>
+      {
+        sendMessage("Japanese words",
+          client.channel.cache.get(1281685530546802758),
+          "k!r n5",
+          null) ;
+      },
+    start : true,
+    timeZone : "Europe/Paris"
   }
 ) ;
 
@@ -254,28 +280,34 @@ client.on("ready", () =>
   {
     for ( const birthday of Config.birthdays )
     {
-      Schedule.scheduleJob(("30 9 " + birthday.date + " *"), () => 
+      CronJob.from(
         {
-          let users = "" ;
-          let first_names = "" ;
-          for ( const user of birthday.users )
-          {
-            users += "<@" + user.id + "> " ;
-            first_names += user.comment + " " ;
-          }
+          cronTime : `0 30 9 ${birthday.date} *`,
+          onTick : () =>
+            {
+              let users = "" ;
+              let first_names = "" ;
+              for ( const user of birthday.users )
+              {
+                users += "<@" + user.id + "> " ;
+                first_names += user.comment + " " ;
+              }
 
-          console.log(`Anniv(s) de : ${first_names}(${birthday.date})`) ;
+              console.log(`Anniv(s) de : ${first_names}(${birthday.date})`) ;
 
-          general.send(":index_pointing_at_the_viewer:"
-                       + ":index_pointing_at_the_viewer:"
-                       + ":index_pointing_at_the_viewer:") ;
-          general.send(users) ; 
-          general.send("** **") ;
-          general.send(":palm_up_hand::birthday:") ; 
-          general.send("** **") ;
-          general.send("** **") ;
-          general.send(
-              `:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
+              general.send(":index_pointing_at_the_viewer:"
+                           + ":index_pointing_at_the_viewer:"
+                           + ":index_pointing_at_the_viewer:") ;
+              general.send(users) ; 
+              general.send("** **") ;
+              general.send(":palm_up_hand::birthday:") ; 
+              general.send("** **") ;
+              general.send("** **") ;
+              general.send(
+                  `:clap::clap: <@&${Config.birthday_role}> :clap::clap:`) ;
+            },
+          start : true,
+          timeZone : "Europe/Paris"
         }
       ) ;
     }
