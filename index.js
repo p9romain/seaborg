@@ -381,6 +381,25 @@ client.on("messageCreate", message =>
 
         process.exit(0) ; 
       }
+      else
+      if ( message_text === "@reset" )
+      {
+        console.log("====================================\n          Reset nicknames \n====================================") ;
+        console.log() ;
+        console.log() ;
+
+        message.guild.members.fetch().then(members =>
+          {
+            for ( member of members )
+            {
+              if ( member[0] !== Config.owner_id )
+              {
+                member[1].setNickname("") ;
+              }
+            }
+          }
+        ) ;
+      }
 
       // TALK MY CHILD !!!!
       else
@@ -467,11 +486,11 @@ client.on("messageCreate", message =>
 
         const checks = [ 
           [ "je suis", [] ], 
-          [ "js", [] ] , 
+          [ "jsuis", [] ],
           [ "jss", [] ], 
-          [ "suis", ["tu", "jy", "jen", "me", "jte", "jme" ] ], 
+          [ "js", [] ], 
           [ "chui", [ "me" ] ], 
-          [ "jsuis", [] ] 
+          [ "suis", ["tu", "jy", "jen", "me", "jte", "jme" ] ]
         ] ;
 
         for ( const [test, exceptions] of checks )
@@ -507,8 +526,22 @@ client.on("messageCreate", message =>
         {
           try
           {
-            const new_nickname = nickname.slice(0, 32)
-              .split( new RegExp("[.?!;\t\n\r\f\v]+", "ui") )[0] ; 
+            nickname = nickname.split(' ') ;
+            let new_nickname = "" ;
+            for ( const word of nickname )
+            {
+              if ( word.slice(0, 1) === "<" && word.slice(-1) === '>' )
+              {
+                break ;
+              }
+              else
+              {
+                new_nickname += word + " " ;
+              }
+            }
+            new_nickname = new_nickname.slice(0, 32)
+              .split( new RegExp("[.?!;\t\n\r\f\v]+", "ui") )[0] ;
+
             if ( new_nickname )
             {
               const tag = `Nicknaming from \"${message.member.displayName}\" ` 
