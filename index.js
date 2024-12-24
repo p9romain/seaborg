@@ -206,11 +206,32 @@ CronJob.from(
       {
         if ( Math.random() < Config.proba_burger )
         {
-          sendMessage("7 Décembre", 
-            cacapublier,
-            "# :hamburger: EH OUI :hamburger:",
-            null,
-            message_attach = [ "./files/eh_oui.mp4" ]) ;
+          let proba = Math.random() ;
+          if ( proba < 1/3 )
+          {
+            sendMessage("7 Décembre", 
+              cacapublier,
+              "# :hamburger: EH OUI :hamburger:",
+              null,
+              message_attach = [ "./files/eh_oui.mp4" ]) ;
+          }
+          else if ( proba < 2/3 )
+          {
+            sendMessage("7 Décembre",
+              cacapublier,
+              "# Eh oui :smiley:, le 7 décembre 2020 :scroll:, le hamburger :hamburger:, ma dire comme les jeunes :boy: calisse:wine_glass: de mineures :baby: mangeux de mardes :poop: de tabarnak :mosquito:  qui disent, le hamburger :hamburger: pédophile :japanese_ogre:, à Yaya, yyyyyaaaahouu :cowboy: les raies :fish: mangez donc toute d'la marde :poop: gang :people_wrestling: de calisse :wine_glass: ma toute vous calissez :wine_glass: à rivière :ocean: ma gang :people_wrestling: de tabarnak :mosquito: de mangeux d'marde :poop: de jeunes :boy: calisse :wine_glass: de tabarnak :mosquito:",
+              null) ;
+          }
+          else
+          {
+            sendMessage("7 Décembre", 
+              cacapublier,
+              "# :hamburger: EH OUI :hamburger:",
+              null,
+              message_attach = [ "./files/eh_oui_le_retour.mp4" ]) ;
+          }
+
+
         }
       },
     start : true,
@@ -263,20 +284,20 @@ CronJob.from(
 // Japanese words
 function sendCommand() 
 {
+  let message ;
   if ( Math.random() < 0.5 )
   {
-    sendMessage("Japanese words",
-      jap_channel,
-      "k!r n5",
-      null) ;
+    message = "k!r n5" ;
   }
   else
   {
-    sendMessage("Japanese words",
-      jap_channel,
-      "k!r n4",
-      null) ;
+    message = "k!r n4" ;
   }
+
+  sendMessage("Japanese words",
+    jap_channel,
+    message,
+    null) ;
 }
 
 CronJob.from(
@@ -751,7 +772,7 @@ client.on("messageCreate", message =>
             return ;
           }
         }
-        
+
         // Bref.
         {
           if ( wouldAnswer(message_text, 
