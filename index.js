@@ -109,7 +109,7 @@ function sendMessage(tag, channel, message_text, author,
     ============================================================================
 */
 
-let general, cacapublier, pissoir, secret_channel ;
+let general, cacapublier, pissoir, jap_channel, secret_channel ;
 let old_channel, is_deux_sent ;
 
 client.on("ready", () =>
@@ -117,6 +117,7 @@ client.on("ready", () =>
     general = client.channels.cache.get(Config.general_id) ;
     cacapublier = client.channels.cache.get(Config.cacapublier_id) ;
     pissoir = client.channels.cache.get(Config.pissoir_id) ;
+    jap_channel = client.channels.cache.get(Config.jap_channel_id) ;
     secret_channel = client.channels.cache.get(Config.secret_channel_id) ;
 
     old_channel = general ;
@@ -260,15 +261,60 @@ CronJob.from(
 ) ;
 
 // Japanese words
+function sendCommand() 
+{
+  if ( Math.random() < 0.5 )
+  {
+    sendMessage("Japanese words",
+      jap_channel,
+      "k!r n5",
+      null) ;
+  }
+  else
+  {
+    sendMessage("Japanese words",
+      jap_channel,
+      "k!r n4",
+      null) ;
+  }
+}
+
 CronJob.from(
   {
     cronTime : "0 0 12 * * *",
+    onTick : sendCommand,
+    start : true,
+    timeZone : "Europe/Paris"
+  }
+) ;
+CronJob.from(
+  {
+    cronTime : "0 0 16 * * *",
+    onTick : sendCommand,
+    start : true,
+    timeZone : "Europe/Paris"
+  }
+) ;
+CronJob.from(
+  {
+    cronTime : "0 0 20 * * *",
+    onTick : sendCommand,
+    start : true,
+    timeZone : "Europe/Paris"
+  }
+) ;
+
+// Juillet
+CronJob.from(
+  {
+    cronTime : "0 0 0 1 7 *",
     onTick : () =>
       {
-        sendMessage("Japanese words",
-          client.channel.cache.get(1281685530546802758),
-          "k!r n5",
-          null) ;
+        sendMessage("Juillet",
+          general,
+          "_Merci Monté._",
+          null,
+          message_attach = [ "./files/juillet.mp4" ]) ;
       },
     start : true,
     timeZone : "Europe/Paris"
@@ -293,7 +339,11 @@ client.on("ready", () =>
                 first_names += user.comment + " " ;
               }
 
-              console.log(`Anniv(s) de : ${first_names}(${birthday.date})`) ;
+              debugInfo(general,
+              	null,
+                `Anniv(s) de : ${first_names}(${birthday.date})`, 
+             	false,
+              	verbose = DEBUG_MODE) ;
 
               general.send(":index_pointing_at_the_viewer:"
                            + ":index_pointing_at_the_viewer:"
@@ -446,7 +496,10 @@ client.on("messageCreate", message =>
           {
             do_rename = true ;
             const split = nickname.split(re) ;
-            nickname = split[split.findLastIndex(f => f)].trim() ;
+            if (split.findLastIndex(f => f) !== -1) 
+            {
+              nickname = split[split.findLastIndex(f => f)].trim() ;
+            }
           }
         }
 
@@ -454,17 +507,21 @@ client.on("messageCreate", message =>
         {
           try
           {
-            const new_nickname = nickname.slice(0, 32) ; 
-            const tag = `Nicknaming from \"${message.member.displayName}\" ` 
-              + `to \"${new_nickname}\"` ;
+            const new_nickname = nickname.slice(0, 32)
+              .split( new RegExp("[.?!;\t\n\r\f\v]+", "ui") )[0] ; 
+            if ( new_nickname )
+            {
+              const tag = `Nicknaming from \"${message.member.displayName}\" ` 
+                  + `to \"${new_nickname}\"` ;
 
-            debugInfo(channel, 
-              author, 
-              tag,
-              false,
-              verbose = DEBUG_MODE) ;
+              debugInfo(channel, 
+                author, 
+                tag,
+                false,
+                verbose = DEBUG_MODE) ;
 
-            message.member.setNickname(new_nickname) ;
+               message.member.setNickname(new_nickname) ;
+             }
           }
           catch ( e ) 
           { 
@@ -580,6 +637,7 @@ client.on("messageCreate", message =>
           {
             debugInfo(channel, author, "Curse of Ra", true) ;
             console.log(e) ;
+            console.log() ;
             console.log() ;
           }
           return ;
