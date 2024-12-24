@@ -477,7 +477,6 @@ client.on("messageCreate", message =>
     }
     else if ( author.id !== Config.bot_id )
     {
-
       // Je suis....
       if ( author.id !== Config.owner_id )
       {
@@ -616,109 +615,125 @@ client.on("messageCreate", message =>
 
       if ( channel !== pissoir )
       {
-        // Bref.
-        if ( wouldAnswer(message_text, 
-               [ "bref" ], 
-               proba = Config.proba_bref, 
-               anywhere = true)
-           )
-        {
-          sendMessage("Bref", 
-            channel, 
-            "Bref.", 
-            author, 
-            message_attach = [ "./files/bref.gif" ]) ;
-          return ;
-        }
-
-        // Un, deux, trois, soleil !
-        if ( is_deux_sent
-             && wouldAnswer(
-                  message_text, 
-                  [ "trois" ], 
-                  proba = 2, 
-                  anywhere = true) 
-           )
-        {
-          sendMessage("Trois-Soleil", channel, "Soleil ! <3", author) ;
-          is_deux_sent = false ;
-          return ;
-        }
-        is_deux_sent = false ;
-
         // CURSE OF RA
-        if ( Math.random() < Config.proba_curse )
         {
-          try
+          if ( Math.random() < Config.proba_curse )
           {
-            debugInfo(channel, 
-              author, 
-              "Curse of Ra", 
-              false,
-              verbose = DEBUG_MODE) ;
-
-            for ( let i = 0 ; i < Math.floor( 100 * Math.random() ) ; i++ )
+            try
             {
-              channel.send("CURSE OF RA 𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩 𓀪 𓀫 𓀬 𓀭 𓀲 𓀳 𓀴 𓀵 𓀶 𓀷 𓀸 𓀹 𓀺 𓀻 𓀼 𓀽 𓀾 𓀿 𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁍 𓁎 𓁏 𓁐 𓁑") ;
-              for ( let j = 0 ; j < Math.floor( 100 * Math.random() ) ; j++ )
+              debugInfo(channel, 
+                author, 
+                "Curse of Ra", 
+                false,
+                verbose = DEBUG_MODE) ;
+  
+              for ( let i = 0 ; i < Math.floor( 100 * Math.random() ) ; i++ )
               {
-                channel.send("** **") ;
+                channel.send("CURSE OF RA 𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩 𓀪 𓀫 𓀬 𓀭 𓀲 𓀳 𓀴 𓀵 𓀶 𓀷 𓀸 𓀹 𓀺 𓀻 𓀼 𓀽 𓀾 𓀿 𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁍 𓁎 𓁏 𓁐 𓁑") ;
+                for ( let j = 0 ; j < Math.floor( 100 * Math.random() ) ; j++ )
+                {
+                  channel.send("** **") ;
+                }
               }
             }
+            catch ( e )
+            {
+              debugInfo(channel, author, "Curse of Ra", true) ;
+              console.log(e) ;
+              console.log() ;
+              console.log() ;
+            }
+            return ;
           }
-          catch ( e )
-          {
-            debugInfo(channel, author, "Curse of Ra", true) ;
-            console.log(e) ;
-            console.log() ;
-            console.log() ;
-          }
-          return ;
         }
 
-        // Zeste délicieux.............
-        if ( author.id === Config.nesta_id 
-          && Math.random() < Config.proba_nesta )
+        // Pee hehe 
         {
-          sendMessage("Nesta", 
-            channel, 
-            "", 
-            author, 
-            message_attach = [ "./files/nesta.gif" ]) ;
-          return ;
+          if ( Math.random() < Config.proba_pee )
+          {
+            sendMessage("Pee", 
+              channel, 
+              `*pees in ur ass* <@${author.id}>`,
+              author) ;
+            return ;
+          }
         }
         
-        // Pee hehe 
-        if ( Math.random() < Config.proba_pee )
+        // Zeste délicieux.............
         {
-          sendMessage("Pee", 
-            channel, 
-            `*pees in ur ass* <@${author.id}>`,
-            author) ;
-          return ;
+          if ( author.id === Config.nesta_id 
+                && Math.random() < Config.proba_nesta )
+          {
+            sendMessage("Nesta", 
+              channel, 
+              "", 
+              author, 
+              message_attach = [ "./files/nesta.gif" ]) ;
+            return ;
+          }
+        }
+        
+
+
+        // Un, deux, trois, soleil !
+        {
+          if ( is_deux_sent
+               && wouldAnswer(
+                    message_text, 
+                    [ "trois" ], 
+                    proba = 2, 
+                    anywhere = true) 
+             )
+          {
+            sendMessage("Trois-Soleil", channel, "Soleil ! <3", author) ;
+            is_deux_sent = false ;
+            return ;
+          }
+          is_deux_sent = false ;
+        }
+
+        // Discord => scord
+        {
+          let re = new RegExp('di');
+          if ( re.test(message) && Math.random() < Config.proba_di ) 
+          {
+            const split = message.split(re);
+            if (split.findLastIndex(f => f) !== -1) 
+            {
+              sendMessage("Di-blabla",
+                channel,
+                split[split.findLastIndex(f => f)].trim().slice(0, 32),
+                author
+              )
+  
+              return ;
+            }
+          }
         }
 
         // BTR MENTIONED????!!!??!?!?!!,,,,,,
-        if ( wouldAnswer(message_text, 
-               [ "btr", "bocchi", "ryo", "kita", 
-                 "nijika", "seika", "pa", "kikuri" ], 
-               proba = Config.proba_btr,
-               anywhere = true)
-           )
         {
-          let files = []
-          for ( const file of fs.readdirSync("./files/btr/") )
+          if ( wouldAnswer(message_text, 
+                [ "btr", "bocchi", "ryo", "kita", 
+                  "nijika", "seika", "pa", "kikuri" ], 
+                proba = Config.proba_btr,
+                anywhere = true)
+             )
           {
-            files.push("./files/btr/" + file) ;
+            let files = []
+            for ( const file of fs.readdirSync("./files/btr/") )
+            {
+              files.push("./files/btr/" + file) ;
+            }
+  
+            sendMessage("BTR Mentioned", 
+              channel, 
+              "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:",
+              author,
+              message_attach = files) ;
+  
+            return ;
           }
-
-          sendMessage("BTR Mentioned", 
-            channel, 
-            "# :bangbang::bangbang: BTR MENTIONED :bangbang::bangbang:",
-            author,
-            message_attach = files) ;
-
-          return ;
         }
 
         // Need to mimir
@@ -733,6 +748,53 @@ client.on("messageCreate", message =>
               "", 
               author,
               message_attach = [ "./files/es_hora_de_dormir.mp4" ]) ;
+            return ;
+          }
+        }
+        
+        // Bref.
+        {
+          if ( wouldAnswer(message_text, 
+                 [ "bref" ], 
+                 proba = Config.proba_bref, 
+                 anywhere = true)
+             )
+          {
+            sendMessage("Bref", 
+              channel, 
+              "Bref.", 
+              author, 
+              message_attach = [ "./files/bref.gif" ]) ;
+            return ;
+          }
+        }
+
+        // Contexte?
+        {
+          if ( wouldAnswer(message_text, [ "contexte" ], 
+                proba = Config.proba_contexte)
+             )
+          {
+            sendMessage("Contexte",
+              channel, 
+              "",
+              author,
+              message_attach = [ "./files/contexte.jpg" ]) ;
+            return ;
+          }
+        }
+
+        // Source?
+        {
+          if ( wouldAnswer(message_text, [ "source" ],
+                proba = Config.proba_source)
+             )
+          {
+            sendMessage("Source",
+              channel, 
+              "",
+              author,
+              message_attach = [ "./files/source.png" ]) ;
             return ;
           }
         }
@@ -881,73 +943,49 @@ client.on("messageCreate", message =>
         }
 
         // H
-        if ( wouldAnswer(
-               message_text, 
-               [ "h" ],
-               proba = Config.proba_h, 
-               anywhere = true) 
-           )
         {
-          const proba = Math.random() ;
-          if ( proba < 0.25 )
+          if ( wouldAnswer(
+                message_text, 
+                [ "h" ],
+                proba = Config.proba_h, 
+                anywhere = true) 
+             )
           {
-            sendMessage("H1",
-              channel, 
-              "",
-              author,
-              message_attach = [ "./files/h/h1.gif" ]) ;
+            const proba = Math.random() ;
+            if ( proba < 0.25 )
+            {
+              sendMessage("H1",
+                channel, 
+                "",
+                author,
+                message_attach = [ "./files/h/h1.gif" ]) ;
+            }
+            else if ( proba < 0.5 )
+            {
+              sendMessage("H2",
+                channel, 
+                "",
+                author,
+                message_attach = [ "./files/h/h2.gif" ]) ;
+            }
+            else if ( proba < 0.75 )
+            {
+              sendMessage("H3",
+                channel, 
+                "",
+                author,
+                message_attach = [ "./files/h/h3.gif" ]) ;
+            }
+            else
+            {
+              sendMessage("H4",
+                channel, 
+                "",
+                author,
+                message_attach = [ "./files/h/h4.gif" ]) ;
+            }
+            return ;
           }
-          else if ( proba < 0.5 )
-          {
-            sendMessage("H2",
-              channel, 
-              "",
-              author,
-              message_attach = [ "./files/h/h2.gif" ]) ;
-          }
-          else if ( proba < 0.75 )
-          {
-            sendMessage("H3",
-              channel, 
-              "",
-              author,
-              message_attach = [ "./files/h/h3.gif" ]) ;
-          }
-          else
-          {
-            sendMessage("H4",
-              channel, 
-              "",
-              author,
-              message_attach = [ "./files/h/h4.gif" ]) ;
-          }
-          return ;
-        }
-
-        // Contexte?
-        if ( wouldAnswer(message_text, [ "contexte" ], 
-               proba = Config.proba_contexte)
-           )
-        {
-          sendMessage("Contexte",
-            channel, 
-            "",
-            author,
-            message_attach = [ "./files/contexte.jpg" ]) ;
-          return ;
-        }
-
-        // Source?
-        if ( wouldAnswer(message_text, [ "source" ],
-               proba = Config.proba_source)
-           )
-        {
-          sendMessage("Source",
-            channel, 
-            "",
-            author,
-            message_attach = [ "./files/source.png" ]) ;
-          return ;
         }
       }
     }
