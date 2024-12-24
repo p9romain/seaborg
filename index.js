@@ -141,7 +141,7 @@ client.login(Config.token) ;
 // Nous sommes vendredi
 CronJob.from(
   {
-    cronTime : "0 0 8 * * 5",
+    cronTime : "0 0 0 * * 5",
     onTick : () =>
       {
         const p1 = Math.random() ;
@@ -221,7 +221,7 @@ CronJob.from(
 // The 21st night of September.........
 CronJob.from(
   {
-    cronTime : "0 0 8 22 9 *",
+    cronTime : "0 0 0 22 9 *",
     onTick : () =>
       {
         sendMessage("21st night of September",
