@@ -720,7 +720,7 @@ client.on("messageCreate", message =>
           let re = new RegExp('di') ;
           if ( re.test(message) && Math.random() < Config.proba_di ) 
           {
-						const without_link = message
+						const without_link = message_text
 							.split(' ')
 							.reduce(
 								(acc, s) => 
