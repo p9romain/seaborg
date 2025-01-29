@@ -550,7 +550,8 @@ client.on("messageCreate", message =>
             let new_nickname = "" ;
             for ( const word of nickname )
             {
-              if ( word.slice(0, 1) === "<" && word.slice(-1) === '>' )
+							let b = (new RegExp(/https?:\/\/\S+/g)).test(word) ; 	
+              if ( !b && word.slice(0, 1) === "<" && word.slice(-1) === '>' )
               {
                 break ;
               }
@@ -559,7 +560,8 @@ client.on("messageCreate", message =>
                 new_nickname += word + " " ;
               }
             }
-            new_nickname = new_nickname.slice(0, 32)
+            new_nickname = new_nickname
+							.slice(0, 32)
               .split( new RegExp("[.?!;\t\n\r\f\v]+", "ui") )[0] ;
 
             if ( new_nickname )
@@ -715,20 +717,42 @@ client.on("messageCreate", message =>
 
         // Discord => scord
         {
-          let re = new RegExp('di');
+          let re = new RegExp('di') ;
           if ( re.test(message) && Math.random() < Config.proba_di ) 
           {
-            const split = message.split(re);
-            if (split.findLastIndex(f => f) !== -1) 
-            {
-              sendMessage("Di-blabla",
-                channel,
-                split[split.findLastIndex(f => f)].trim().slice(0, 32),
-                author
-              )
-  
-              return ;
-            }
+						const without_link = message
+							.split(' ')
+							.reduce(
+								(acc, s) => 
+									{
+										let re = new RegExp(/https?:\/\/\S+/g) ; 
+										if ( re.test(s) )
+										{
+											return [] ;
+										}
+										else
+										{
+											acc.push(s) ;
+											return acc ;
+										}
+									},
+								[]
+							)
+							.join(' ') ;
+						if ( re.test(without_link) )
+						{
+							const split = without_link.split(re) ;
+							if (split.findLastIndex(f => f) !== -1) 
+							{
+								sendMessage("Di-blabla",
+									channel,
+									split[split.findLastIndex(f => f)].trim().slice(0, 32),
+									author
+								)
+		
+								return ;
+							}
+						}
           }
         }
 
