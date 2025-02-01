@@ -717,7 +717,7 @@ client.on("messageCreate", message =>
 
         // Discord => scord
         {
-          let re = new RegExp('di') ;
+          let re = new RegExp("di[^aeuoy]") ;
           if ( re.test(message) && Math.random() < Config.proba_di ) 
           {
 						const without_link = message_text
@@ -746,7 +746,7 @@ client.on("messageCreate", message =>
 							{
 								sendMessage("Di-blabla",
 									channel,
-									split[split.findLastIndex(f => f)].trim().slice(0, 32),
+									split[split.findLastIndex(f => f)].trim(),
 									author
 								)
 		
