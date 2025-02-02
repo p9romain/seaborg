@@ -739,6 +739,7 @@ client.on("messageCreate", message =>
 								[]
 							)
 							.join(' ') ;
+						re = new RegExp("di") ;
 						if ( re.test(without_link) )
 						{
 							const split = without_link.split(re) ;
